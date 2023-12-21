@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:frontend_project/components/my_textfield.dart';
 import 'package:frontend_project/pages/login.dart';
 import 'package:frontend_project/components/square_tile.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key});
 
@@ -21,21 +23,54 @@ class _SignUpPageState extends State <SignUpPage> {
 
 
 
-  void signUpUser() {
+    void signUpUser() {
     setState(() {
-      isLoading = true;
+    isLoading = true;
     });
 
-    // Simulate a delay for sign-up
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
+    // Create a Map of user data
+    Map<String, String> userData = {
+    'username': signupuserController.text,
+    'email': signupemailController.text,
+    'firstName': signupfirstnameController.text,
+    'lastName': signuplastnameController.text,
+    'password': signuppassController.text,
+    'confirmPassword': signupconfirmpassController.text,
+    };
 
-      // Navigate to the login screen after a successful sign-up
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
+    // Convert the Map to a JSON string
+    String jsonData = json.encode(userData);
+
+    // Send a POST request to the sign-up endpoint
+    http.post(Uri.parse('https://gjq3q54r-8080.asse.devtunnels.ms/user/login'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonData,
+    ).then((http.Response response) {
+    setState(() {
+      isLoading = false;
     });
-  }
+
+ // Check the status code for the result
+ if (response.statusCode == 200) {
+   // If the server returns a 200 OK response, parse the JSON.
+   Map<String, dynamic> jsonResponse = json.decode(response.body);
+   print(jsonResponse);
+   // You can now use the data in the JSON response to update your app's state
+ } else {
+   // If the server returns an error response, throw an exception.
+   throw Exception('Failed to load user');
+ }
+
+ // Navigate to the login screen after a successful sign-up
+ Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
+ }).catchError((error) {
+ // Handle any errors that occur during the request
+ print('An error occurred: $error');
+ });
+}
+
 
   @override
   Widget build(BuildContext context) {
