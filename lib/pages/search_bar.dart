@@ -1,33 +1,28 @@
 //import dependencies
 import 'package:flutter/material.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}): super(key: key);
+class SearchBar extends StatefulWidget {
+  const SearchBar({Key? key}): super(key: key);
 
   @override
-  HomePageState createState() => HomePageState();
+  SearchBarState createState() => SearchBarState();
 }
 
-class HomePageState extends State<HomePage>  {
+class SearchBarState extends State<SearchBar>  {
  @override
- Widget build(BuildContext context) {
-   return Scaffold(
-     body: CustomScrollView(
-       slivers: [
-         SliverStickyHeader(
-           header: _buildHeader(),
-           sliver: SliverList(
-             delegate: SliverChildBuilderDelegate(
-               (context, index) => _buildContent(index),
-               childCount: 100, // This will generate 100 content widgets
-             ),
-           ),
-         ),
-       ],
-     ),
-   );
- }
+Widget build(BuildContext context) {
+ return Scaffold(
+   body: CustomScrollView(
+     slivers: [
+       SliverStickyHeader(
+         header: _buildHeader(),
+       ),
+     ],
+   ),
+ );
+}
 
  Widget _buildHeader() {
    return Container(
@@ -70,6 +65,7 @@ class HomePageState extends State<HomePage>  {
                       )
                     ],
                     )
+
                   ),
                 ),
                 Padding(
@@ -86,17 +82,52 @@ class HomePageState extends State<HomePage>  {
              ),
            ],
          ),
-         const SizedBox(height: 65),// Add space below the button
+         const SizedBox(height: 22),
+         Row(
+           mainAxisAlignment: MainAxisAlignment.center,
+           children: [
+             SizedBox(
+               width: 390,
+               height: 32,
+               child: ElevatedButton(
+                onPressed: () {
+                  // Handle button press if needed
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF31314D),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    side: const BorderSide(
+                      color:  Color(0xFF31304D),
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.discount, size: 17.0),
+                    const SizedBox(width: 5.0),
+                    Text(
+                      'Promotional Offers',
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+               ),
+             ),
+           ],
+         ),
+         const SizedBox(height: 20), // Add space below the button
        ],
      ),
    );
  }
 
- Widget _buildContent(int index) {
-   return SizedBox(
-     child: Text('Content $index'),
-   );
- }
 
  Widget _buildIconContainer(IconData iconData) {
    return Container(

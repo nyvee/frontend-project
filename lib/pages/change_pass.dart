@@ -1,16 +1,19 @@
+//import dependencies
 import 'package:flutter/material.dart';
-import 'package:frontend_project/components/my_textfield.dart';
 import 'package:google_fonts/google_fonts.dart';
+//import pages
 import 'package:frontend_project/pages/login.dart';
+//import components
+import 'package:frontend_project/components/my_textfield.dart';
 
 class ChangePass extends StatefulWidget {
-  const ChangePass({Key? key});
+  const ChangePass({Key? key}) : super(key: key);
 
   @override
-  _ChangePassState createState() => _ChangePassState();
+  ChangePassState createState() => ChangePassState();
 }
 
-class _ChangePassState extends State<ChangePass> {
+class ChangePassState extends State<ChangePass> {
   final rppassController = TextEditingController();
   final rpcpassController = TextEditingController();
   bool isLoading = false;
@@ -25,9 +28,11 @@ class _ChangePassState extends State<ChangePass> {
         isLoading = false;
       });
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => LoginPage(),
-      ));
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ),
+      );
     });
   }
 
@@ -47,7 +52,10 @@ class _ChangePassState extends State<ChangePass> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+
                 const SizedBox(height: 15),
+
+                //arrowback
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Align(
@@ -81,7 +89,10 @@ class _ChangePassState extends State<ChangePass> {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 75),
+
+                //reset pass label
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -98,7 +109,10 @@ class _ChangePassState extends State<ChangePass> {
                     ],
                   ),
                 ),
+                
                 const SizedBox(height: 45),
+
+                //warning
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -122,7 +136,7 @@ class _ChangePassState extends State<ChangePass> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'from your previous used password.',
+                        'from your previously used password.',
                         style: GoogleFonts.montserrat(
                           color: Colors.black,
                           fontWeight: FontWeight.w400,
@@ -132,7 +146,10 @@ class _ChangePassState extends State<ChangePass> {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 73),
+
+                //password label
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -149,12 +166,18 @@ class _ChangePassState extends State<ChangePass> {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 7),
+
+                //password field
                 MyTextField(
                   controller: rppassController,
                   obscureText: false,
                 ),
+
                 const SizedBox(height: 10),
+
+                //confirm password
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -171,7 +194,10 @@ class _ChangePassState extends State<ChangePass> {
                     ],
                   ),
                 ),
+                
                 const SizedBox(height: 7),
+
+                //confirmpass field
                 MyTextField(
                   controller: rpcpassController,
                   obscureText: false,

@@ -1,18 +1,25 @@
+//import dependencies
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:frontend_project/components/my_textfield.dart';
+import 'package:logger/logger.dart';
+import 'package:http/http.dart';
+//import pages
 import 'package:frontend_project/pages/login.dart';
+//import components
 import 'package:frontend_project/components/square_tile.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:frontend_project/components/my_textfield.dart';
+import 'package:frontend_project/components/password_text_field.dart';
+//import utils
+import 'package:frontend_project/utils/size_config.dart';
+
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key});
+  const SignUpPage({Key? key}) : super(key: key);
 
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  SignUpPageState createState() => SignUpPageState();
 }
 
-class _SignUpPageState extends State <SignUpPage> {
+class SignUpPageState extends State<SignUpPage> {
   final signupuserController = TextEditingController();
   final signupemailController = TextEditingController();
   final signupfirstnameController = TextEditingController();
@@ -20,73 +27,67 @@ class _SignUpPageState extends State <SignUpPage> {
   final signuppassController = TextEditingController();
   final signupconfirmpassController = TextEditingController();
   bool isLoading = false;
+  bool _isObscurePassword = true;
+  bool _isObscureConfirmPassword = true;
+  SizeConfig sizeConfig = SizeConfig();
 
+  void signUp(
+    String username,
+    String email,
+    String firstname,
+    String lastname,
+    String password,
+    String confirmPassword,
+  ) async {
+    if (password != confirmPassword) {
+      var logger = Logger();
+      logger.d('Passwords do not match');
+      return;
+    }
 
+    try {
+      Response response = await post(
+        Uri.parse('https://gjq3q54r-8080.asse.devtunnels.ms/user/register'),
+        body: {
+          'username': username,
+          'email': email,
+          'firstname': firstname,
+          'lastname': lastname,
+          'password': password,
+        },
+      );
 
-    void signUpUser() {
-    setState(() {
-    isLoading = true;
-    });
-
-    // Create a Map of user data
-    Map<String, String> userData = {
-    'username': signupuserController.text,
-    'email': signupemailController.text,
-    'firstName': signupfirstnameController.text,
-    'lastName': signuplastnameController.text,
-    'password': signuppassController.text,
-    'confirmPassword': signupconfirmpassController.text,
-    };
-
-    // Convert the Map to a JSON string
-    String jsonData = json.encode(userData);
-
-    // Send a POST request to the sign-up endpoint
-    http.post(Uri.parse('https://gjq3q54r-8080.asse.devtunnels.ms/user/login'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonData,
-    ).then((http.Response response) {
-    setState(() {
-      isLoading = false;
-    });
-
- // Check the status code for the result
- if (response.statusCode == 200) {
-   // If the server returns a 200 OK response, parse the JSON.
-   Map<String, dynamic> jsonResponse = json.decode(response.body);
-   print(jsonResponse);
-   // You can now use the data in the JSON response to update your app's state
- } else {
-   // If the server returns an error response, throw an exception.
-   throw Exception('Failed to load user');
- }
-
- // Navigate to the login screen after a successful sign-up
- Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
- }).catchError((error) {
- // Handle any errors that occur during the request
- print('An error occurred: $error');
- });
-}
-
+      if (response.statusCode == 200) {
+        // Handle success if needed
+      } else {
+        var logger = Logger();
+        logger.d('Failed to create account');
+      }
+    } catch (e) {
+      var logger = Logger();
+      logger.d(e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF0EBE5),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+
                 const SizedBox(height: 15),
 
                 // Back Arrow Icon
                 Padding(
-                  padding: const EdgeInsets.only(left: 10),
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.0),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Row(
@@ -101,7 +102,6 @@ class _SignUpPageState extends State <SignUpPage> {
                               size: 60,
                             ),
                             onPressed: () {
-                              // Navigate back to the login page
                               Navigator.of(context).pop();
                             },
                           ),
@@ -122,6 +122,7 @@ class _SignUpPageState extends State <SignUpPage> {
 
                 const SizedBox(height: 35),
 
+                // Gateway Text
                 Padding(
                   padding: const EdgeInsets.only(left: 30),
                   child: Column(
@@ -186,9 +187,12 @@ class _SignUpPageState extends State <SignUpPage> {
                 const SizedBox(height: 7),
 
                 // Username TextField
-                MyTextField(
-                  controller: signupuserController,
-                  obscureText: false,
+                SizedBox(
+                  width: sizeConfig.widthSize(context, 97),
+                  child: MyTextField(
+                    controller: signupuserController,
+                    obscureText: false,
+                  ),
                 ),
 
                 const SizedBox(height: 10),
@@ -214,9 +218,12 @@ class _SignUpPageState extends State <SignUpPage> {
                 const SizedBox(height: 7),
 
                 // Email TextField
-                MyTextField(
-                  controller: signupemailController,
-                  obscureText: false,
+                SizedBox(
+                  width: sizeConfig.widthSize(context, 97),
+                  child: MyTextField(
+                    controller: signupemailController,
+                    obscureText: false,
+                  ),
                 ),
 
                 const SizedBox(height: 10),
@@ -242,9 +249,12 @@ class _SignUpPageState extends State <SignUpPage> {
                 const SizedBox(height: 10),
 
                 // First Name TextField
-                MyTextField(
-                  controller: signupfirstnameController,
-                  obscureText: false,
+                SizedBox(
+                  width: sizeConfig.widthSize(context, 97),
+                  child: MyTextField(
+                    controller: signupfirstnameController,
+                    obscureText: false,
+                  ),
                 ),
 
                 const SizedBox(height: 10),
@@ -270,9 +280,12 @@ class _SignUpPageState extends State <SignUpPage> {
                 const SizedBox(height: 10),
 
                 // Last Name TextField
-                MyTextField(
-                  controller: signuplastnameController,
-                  obscureText: false,
+                SizedBox(
+                  width: sizeConfig.widthSize(context, 97),
+                  child: MyTextField(
+                    controller: signuplastnameController,
+                    obscureText: false,
+                  ),
                 ),
 
                 const SizedBox(height: 10),
@@ -297,15 +310,23 @@ class _SignUpPageState extends State <SignUpPage> {
 
                 const SizedBox(height: 10),
 
-                // Password textfield
-                MyTextField(
-                  controller: signuppassController,
-                  obscureText: false,
+                // Password TextField
+                SizedBox(
+                  width: sizeConfig.widthSize(context, 97),
+                  child: PasswordTextField(
+                    controller: signuppassController,
+                    isObscure: _isObscurePassword,
+                    onVisibilityChanged: (value) {
+                      setState(() {
+                        _isObscurePassword = value;
+                      });
+                    },
+                  ),
                 ),
 
                 const SizedBox(height: 10),
 
-                // Confir Pass
+                // Confirm Password
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -325,122 +346,128 @@ class _SignUpPageState extends State <SignUpPage> {
 
                 const SizedBox(height: 10),
 
-                // Conf Pass Text field
-                MyTextField(
-                  controller: signupconfirmpassController,
-                  obscureText: false,
+                // Confirm Password TextField
+                SizedBox(
+                  width: sizeConfig.widthSize(context, 97),
+                  child: PasswordTextField(
+                    controller: signupconfirmpassController,
+                    isObscure: _isObscureConfirmPassword,
+                    onVisibilityChanged: (value) {
+                      setState(() {
+                        _isObscureConfirmPassword = value;
+                      });
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 50),
+
+                // Sign Up Button
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF31314D),
+                    minimumSize: Size(
+                        screenWidth > 600 ? screenWidth * 0.4 : screenWidth * 0.85,
+                        63),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () {
+                    signUp(
+                      signupuserController.text.toString(),
+                      signupemailController.text.toString(),
+                      signupfirstnameController.text.toString(),
+                      signuplastnameController.text.toString(),
+                      signuppassController.text.toString(),
+                      signupconfirmpassController.text.toString(),
+                    );
+                  },
+                  child: Text(
+                    'Sign Up',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 25,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                // Already Have an Account Label
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const LoginPage()));
+                        },
+                        child: Text(
+                          'Already have an account?',
+                          style: GoogleFonts.montserrat(
+                            color: const Color(0xFF1414ed),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 50),
+
+                // Divider Section
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Divider(
+                          indent: 7,
+                          thickness: 1.3,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(
+                          'or',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const Expanded(
+                        child: Divider(
+                          endIndent: 7,
+                          thickness: 1.3,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 23),
+
+                // Social Sign Up Buttons Section
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Google Sign Up Button
+                    SquareTile(buttonText: 'Sign Up With Google'),
+                  ],
                 ),
 
                 const SizedBox(height: 50),
                 
-                // Sign In Button
-              Container(
-                decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 3,
-                  blurRadius: 10,
-                  offset: const Offset(10, 10),
-                  ),
-                ],
-                ),
-                child: ElevatedButton(
-                onPressed: isLoading ? null : signUpUser,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF31314D),
-                  minimumSize: const Size(350, 60),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: isLoading
-                  ? const CircularProgressIndicator()
-                  : Text(
-                  "Create Account",
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 25,
-                  ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              // Don't Have an Account Label
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        // Navigate to the sign-up page
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
-                      },
-                      child: Text(
-                        'Already have an account?',
-                        style: GoogleFonts.montserrat(
-                          color: const Color(0xFF1414ed),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12.5,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 50),
-
-              // Divider Section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: Divider(
-                        indent: 7,
-                        thickness: 1.3,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text(
-                        'or',
-                        style: GoogleFonts.montserrat(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    const Expanded(
-                      child: Divider(
-                        endIndent: 7,
-                        thickness: 1.3,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 23),
-
-              // Social Sign In Buttons Section
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Google Sign In Button
-                  SquareTile(buttonText: 'Sign Up With Google'),
-                ],
-              ),
-
-              const SizedBox(height: 50),
               ],
             ),
           ),

@@ -1,20 +1,24 @@
+//import dependencies
 import 'package:flutter/material.dart';
-import 'package:frontend_project/components/my_textfield.dart';
 import 'package:google_fonts/google_fonts.dart';
+//import pages
 import 'package:frontend_project/pages/login.dart';
+//import components
+import 'package:frontend_project/components/my_textfield.dart';
+//import utils
+import 'package:frontend_project/utils/size_config.dart';
 
 class ForgotPass extends StatefulWidget {
-  const ForgotPass({Key? key});
+  const ForgotPass({Key? key}) : super(key: key);
 
   @override
-  _ForgotPassState createState() => _ForgotPassState();
+  ForgotPassState createState() => ForgotPassState();
 }
 
-class _ForgotPassState extends State<ForgotPass> {
+class ForgotPassState extends State<ForgotPass> {
   final fppemailController = TextEditingController();
-
-  // Loading State
   bool isLoading = false;
+  SizeConfig sizeConfig = SizeConfig();
 
   void forgotPass() {
     setState(() {
@@ -38,9 +42,9 @@ class _ForgotPassState extends State<ForgotPass> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: const Color(0xFFF0EBE5),
-          content: Container(
-            height: 220, // specify the height
-            width: 220, // specify the width
+          content: SizedBox(
+            height: 220,
+            width: 220,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -100,17 +104,23 @@ class _ForgotPassState extends State<ForgotPass> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF0EBE5),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+
                 const SizedBox(height: 15),
+
+                //backicon
                 Padding(
-                  padding: const EdgeInsets.only(left: 10),
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.0),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Row(
@@ -125,7 +135,6 @@ class _ForgotPassState extends State<ForgotPass> {
                               size: 60,
                             ),
                             onPressed: () {
-                              // Navigate back to the login page
                               Navigator.of(context).pop();
                             },
                           ),
@@ -143,7 +152,10 @@ class _ForgotPassState extends State<ForgotPass> {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 55),
+
+                //message
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -194,7 +206,9 @@ class _ForgotPassState extends State<ForgotPass> {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 73),
+                //email label
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -211,12 +225,21 @@ class _ForgotPassState extends State<ForgotPass> {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 7),
-                MyTextField(
-                  controller: fppemailController,
-                  obscureText: false,
+
+                //email field
+                SizedBox(
+                  width: sizeConfig.widthSize(context, 97),
+                  child: MyTextField(
+                    controller: fppemailController,
+                    obscureText: false,
+                  ),
                 ),
+
                 const SizedBox(height: 30),
+
+                //button
                 Container(
                   decoration: BoxDecoration(
                     boxShadow: [
