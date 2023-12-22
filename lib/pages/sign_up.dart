@@ -363,7 +363,18 @@ class SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 50),
 
                 // Sign Up Button
-                ElevatedButton(
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 3,
+                        blurRadius: 10,
+                        offset: const Offset(10, 10),
+                      ),
+                    ],
+                  ),
+                  child:ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF31314D),
                     minimumSize: Size(
@@ -392,6 +403,7 @@ class SignUpPageState extends State<SignUpPage> {
                       fontSize: 25,
                     ),
                   ),
+                ),
                 ),
 
                 const SizedBox(height: 10),
@@ -467,7 +479,7 @@ class SignUpPageState extends State<SignUpPage> {
                 ),
 
                 const SizedBox(height: 50),
-                
+
               ],
             ),
           ),

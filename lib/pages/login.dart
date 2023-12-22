@@ -266,32 +266,43 @@ class LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 35),
 
-                // Sign In Button
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF31314D),
-                    minimumSize: Size(
-                        screenWidth > 600 ? screenWidth * 0.4 : screenWidth * 0.85,
-                        63),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 3,
+                        blurRadius: 10,
+                        offset: const Offset(10, 10),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF31314D),
+                      minimumSize: Size(
+                          screenWidth > 600 ? screenWidth * 0.4 : screenWidth * 0.85,
+                          63),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      login(
+                          usernameController.text.toString(),
+                          passwordController.text.toString());
+                    },
+                    child: Text(
+                      'Sign In',
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 25,
+                      ),
                     ),
                   ),
-                  onPressed: () {
-                    login(
-                        usernameController.text.toString(),
-                        passwordController.text.toString());
-                  },
-                  child: Text(
-                    'Sign In',
-                    style: GoogleFonts.montserrat(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 25,
-                    ),
                   ),
-                ),
 
                 const SizedBox(height: 15),
                 

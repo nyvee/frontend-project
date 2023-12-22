@@ -21,7 +21,7 @@ class SquareTile extends StatelessWidget {
         color: const Color.fromARGB(255, 255, 255, 255),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.grey.withOpacity(0.2),
             spreadRadius: 3,
             blurRadius: 10,
             offset: const Offset(10, 10),

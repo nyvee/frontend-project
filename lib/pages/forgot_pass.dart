@@ -157,7 +157,7 @@ class ForgotPassState extends State<ForgotPass> {
 
                 //message
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -244,7 +244,7 @@ class ForgotPassState extends State<ForgotPass> {
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
+                        color: Colors.grey.withOpacity(0.2),
                         spreadRadius: 3,
                         blurRadius: 10,
                         offset: const Offset(10, 10),
