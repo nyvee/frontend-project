@@ -20,28 +20,30 @@ class MyBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      controller: controller, // Use the provided controller directly
-      screens: _buildScreens(),
-      items: _navBarsItems(),
-      confineInSafeArea: true,
-      backgroundColor: Color.fromARGB(255, 240, 236, 229),
-      handleAndroidBackButtonPress: true,
-      resizeToAvoidBottomInset: true,
-      stateManagement: true,
-      hideNavigationBarWhenKeyboardShows: true,
-      decoration: const NavBarDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black54,
-            blurRadius: 4.0,
-          ),
-        ],
-      ),
-      navBarStyle: NavBarStyle.style3,
-      onItemSelected: onItemSelected,
-    );
+    return shouldShowNavBar()
+        ? PersistentTabView(
+            context,
+            controller: controller, // Use the provided controller directly
+            screens: _buildScreens(),
+            items: _navBarsItems(),
+            confineInSafeArea: true,
+            backgroundColor: Color.fromARGB(255, 240, 236, 229),
+            handleAndroidBackButtonPress: true,
+            resizeToAvoidBottomInset: true,
+            stateManagement: true,
+            hideNavigationBarWhenKeyboardShows: true,
+            decoration: const NavBarDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: 4.0,
+                ),
+              ],
+            ),
+            navBarStyle: NavBarStyle.style3,
+            onItemSelected: onItemSelected,
+          )
+        : SizedBox.shrink();
   }
 
   List<Widget> _buildScreens() {
@@ -97,5 +99,15 @@ class MyBottomNavBar extends StatelessWidget {
         inactiveColorPrimary: Colors.grey,
       ),
     ];
+  }
+
+  // should show navbar only on 5 pages
+  bool shouldShowNavBar() {
+    final int currentIndex = controller.index;
+    return currentIndex == 0 ||
+        currentIndex == 1 ||
+        currentIndex == 2 ||
+        currentIndex == 3 ||
+        currentIndex == 4;
   }
 }
