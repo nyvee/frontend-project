@@ -1,35 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
-import 'components/navbar.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:logger/logger.dart';
 
-void main() {
-  runApp(MyApp());
+import 'pages/login.dart';
+
+void main() async {
+  await Hive.initFlutter();
+  var box = await Hive.openBox('myBox');
+  var logger = Logger();
+  logger.d('Box opened: ${box.isOpen}');
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
-  final PersistentTabController _controller =
-      PersistentTabController(initialIndex: 0);
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My Flutter App',
-      debugShowCheckedModeBanner: false, // Hide the debug banner
-      theme: ThemeData(
-        textTheme: GoogleFonts.montserratTextTheme(
-          Theme.of(context).textTheme,
-        ), // Set the default font family
-        primarySwatch: Colors.grey, // Set the primary color of the app to white
-      ),
-      home: MyBottomNavBar(
-        controller: _controller,
-        currentIndex: _controller.index,
-        onItemSelected: (index) {
-          _controller.index = index;
-        },
-      ),
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: LoginPage(),
     );
   }
 }
