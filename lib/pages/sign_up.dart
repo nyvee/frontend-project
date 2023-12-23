@@ -22,8 +22,8 @@ class SignUpPage extends StatefulWidget {
 class SignUpPageState extends State<SignUpPage> {
   final signupuserController = TextEditingController();
   final signupemailController = TextEditingController();
-  final signupfirstnameController = TextEditingController();
-  final signuplastnameController = TextEditingController();
+  final signupfirstNameController = TextEditingController();
+  final signuplastNameController = TextEditingController();
   final signuppassController = TextEditingController();
   final signupconfirmpassController = TextEditingController();
   bool isLoading = false;
@@ -34,8 +34,8 @@ class SignUpPageState extends State<SignUpPage> {
   void signUp(
     String username,
     String email,
-    String firstname,
-    String lastname,
+    String firstName,
+    String lastName,
     String password,
     String confirmPassword,
   ) async {
@@ -51,23 +51,32 @@ class SignUpPageState extends State<SignUpPage> {
         body: {
           'username': username,
           'email': email,
-          'firstname': firstname,
-          'lastname': lastname,
+          'firstName': firstName,
+          'lastName': lastName,
           'password': password,
         },
       );
 
       if (response.statusCode == 200) {
-        // Handle success if needed
-      } else {
-        var logger = Logger();
-        logger.d('Failed to create account');
-      }
-    } catch (e) {
-      var logger = Logger();
-      logger.d(e.toString());
-    }
-  }
+     var logger = Logger();
+     logger.d('Account Created');
+     Navigator.pushReplacement(
+       context,
+       MaterialPageRoute(builder: (context) => LoginPage()),
+     );
+   } else if (response.statusCode == 400) {
+     ScaffoldMessenger.of(context).showSnackBar(
+       SnackBar(content: Text('The username is used, use another username!')),
+     );
+   } else {
+     var logger = Logger();
+     logger.d('Failed to create account');
+   }
+ } catch (e) {
+   var logger = Logger();
+   logger.d(e.toString());
+ }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -82,10 +91,7 @@ class SignUpPageState extends State<SignUpPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-
                 const SizedBox(height: 15),
-
-                // Back Arrow Icon
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.0),
                   child: Align(
@@ -119,10 +125,7 @@ class SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 35),
-
-                // Gateway Text
                 Padding(
                   padding: const EdgeInsets.only(left: 30),
                   child: Column(
@@ -163,10 +166,7 @@ class SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 45),
-
-                // Username
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -183,10 +183,7 @@ class SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 7),
-
-                // Username TextField
                 SizedBox(
                   width: sizeConfig.widthSize(context, 97),
                   child: MyTextField(
@@ -194,10 +191,7 @@ class SignUpPageState extends State<SignUpPage> {
                     obscureText: false,
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Email
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -214,10 +208,7 @@ class SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 7),
-
-                // Email TextField
                 SizedBox(
                   width: sizeConfig.widthSize(context, 97),
                   child: MyTextField(
@@ -225,10 +216,7 @@ class SignUpPageState extends State<SignUpPage> {
                     obscureText: false,
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // First Name
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -245,21 +233,15 @@ class SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // First Name TextField
                 SizedBox(
                   width: sizeConfig.widthSize(context, 97),
                   child: MyTextField(
-                    controller: signupfirstnameController,
+                    controller: signupfirstNameController,
                     obscureText: false,
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Last Name
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -276,21 +258,15 @@ class SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Last Name TextField
                 SizedBox(
                   width: sizeConfig.widthSize(context, 97),
                   child: MyTextField(
-                    controller: signuplastnameController,
+                    controller: signuplastNameController,
                     obscureText: false,
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Password
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -307,10 +283,7 @@ class SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Password TextField
                 SizedBox(
                   width: sizeConfig.widthSize(context, 97),
                   child: PasswordTextField(
@@ -323,10 +296,7 @@ class SignUpPageState extends State<SignUpPage> {
                     },
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Confirm Password
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -343,10 +313,7 @@ class SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Confirm Password TextField
                 SizedBox(
                   width: sizeConfig.widthSize(context, 97),
                   child: PasswordTextField(
@@ -359,10 +326,7 @@ class SignUpPageState extends State<SignUpPage> {
                     },
                   ),
                 ),
-
                 const SizedBox(height: 50),
-
-                // Sign Up Button
                 Container(
                   decoration: BoxDecoration(
                     boxShadow: [
@@ -374,41 +338,40 @@ class SignUpPageState extends State<SignUpPage> {
                       ),
                     ],
                   ),
-                  child:ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF31314D),
-                    minimumSize: Size(
-                        screenWidth > 600 ? screenWidth * 0.4 : screenWidth * 0.85,
-                        63),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF31314D),
+                      minimumSize: Size(
+                          screenWidth > 600
+                              ? screenWidth * 0.4
+                              : screenWidth * 0.85,
+                          63),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                  onPressed: () {
-                    signUp(
-                      signupuserController.text.toString(),
-                      signupemailController.text.toString(),
-                      signupfirstnameController.text.toString(),
-                      signuplastnameController.text.toString(),
-                      signuppassController.text.toString(),
-                      signupconfirmpassController.text.toString(),
-                    );
-                  },
-                  child: Text(
-                    'Sign Up',
-                    style: GoogleFonts.montserrat(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 25,
+                    onPressed: () {
+                      signUp(
+                        signupuserController.text.toString(),
+                        signupemailController.text.toString(),
+                        signupfirstNameController.text.toString(),
+                        signuplastNameController.text.toString(),
+                        signuppassController.text.toString(),
+                        signupconfirmpassController.text.toString(),
+                      );
+                    },
+                    child: Text(
+                      'Sign Up',
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 25,
+                      ),
                     ),
                   ),
                 ),
-                ),
-
                 const SizedBox(height: 10),
-
-                // Already Have an Account Label
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -431,10 +394,7 @@ class SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 50),
-
-                // Divider Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Row(
@@ -466,20 +426,14 @@ class SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 23),
-
-                // Social Sign Up Buttons Section
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Google Sign Up Button
                     SquareTile(buttonText: 'Sign Up With Google'),
                   ],
                 ),
-
                 const SizedBox(height: 50),
-
               ],
             ),
           ),
