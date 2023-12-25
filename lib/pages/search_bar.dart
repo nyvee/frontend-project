@@ -55,7 +55,7 @@ List<List<Product?>> groupProducts(List<Product> products) {
 
   Future<List<Product>> searchProduct(String productName) async {
     final response = await http.get(Uri.parse(
-        'https://gjq3q54r-8080.asse.devtunnels.ms/api/products?name=$productName'));
+        'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products?name=$productName'));
 
     if (response.statusCode == 200) {
       final dynamic responseData = json.decode(response.body);
@@ -163,7 +163,7 @@ List<List<Product?>> groupProducts(List<Product> products) {
          color: Colors.grey.withOpacity(0.5), // Color of shadow
          spreadRadius: 5, // Spread radius
          blurRadius: 7, // Blur radius
-         offset: Offset(0, -3), // Changes position of shadow
+         offset: const Offset(0, -3), // Changes position of shadow
        ),
      ],
    ),
@@ -193,12 +193,12 @@ List<List<Product?>> groupProducts(List<Product> products) {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.search, color: Color(0xFF31304D)),
-                          SizedBox(width: 5, height: 0,),
+                          const Icon(Icons.search, color: Color(0xFF31304D)),
+                          const SizedBox(width: 5, height: 0,),
                           Expanded(
                             child: TextField(
-                              style: TextStyle(fontSize: 18.0, height: 1.0),
-                              decoration: InputDecoration(
+                              style: const TextStyle(fontSize: 18.0, height: 1.0),
+                              decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 contentPadding:
                                     EdgeInsets.symmetric(vertical: 12.0),
@@ -288,12 +288,12 @@ List<List<Product?>> groupProducts(List<Product> products) {
  return _buildProductCard(product);
  } else if (index == searchResults.length && searchResults.isNotEmpty) {
  // Use SliverToBoxAdapter for custom content
- return SliverToBoxAdapter(
+ return const SliverToBoxAdapter(
  child: Align(
   alignment: Alignment.center,
   child: Padding(
-    padding: const EdgeInsets.only(top: 20.0),
-    child: Container(
+    padding:  EdgeInsets.only(top: 20.0),
+    child: SizedBox(
       width: double.infinity,
       child: Text('No more results'),
     ),
@@ -344,13 +344,13 @@ List<List<Product?>> groupProducts(List<Product> products) {
           child: Container(
             color: const Color(0xFF31314D),
             width: 190.0,
-            height: 280.0,
+            height: 320.0,
             child: Stack(
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Container(
+                    SizedBox(
                       height: 170.0,
                       child: Image.network(
                         product.image,
@@ -402,7 +402,7 @@ List<List<Product?>> groupProducts(List<Product> products) {
                                 // Handle button press here
                               },
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(
+                                side: const BorderSide(
                                   color: Colors.white,
                                   width: 1.0,
                                 ),

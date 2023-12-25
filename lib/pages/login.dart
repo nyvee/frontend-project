@@ -32,16 +32,23 @@ class LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
 
   // Loading State
-  bool isLoading = false;
+  bool _isLoading = false;
   bool _isObscurePassword = true;
+
+  // logger
+  final logger = Logger();
 
   // Instantiate SizeConfig
   SizeConfig sizeConfig = SizeConfig();
 
   void login(String username, password) async {
+    setState(() {
+      _isLoading = true;
+    });
+ 
     try {
       Response response = await post(
-        Uri.parse('https://gjq3q54r-8080.asse.devtunnels.ms/user/login'),
+        Uri.parse('https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/login'),
         body: {
           'username': username,
           'password': password,
@@ -51,11 +58,8 @@ class LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseBody = jsonDecode(response.body);
         String token = responseBody['token'];
-
         var box = Hive.box('myBox');
         box.put('token', token);
-
-        var logger = Logger();
         logger.d('Login successfully');
         printToken();
         Navigator.push(
@@ -63,19 +67,19 @@ class LoginPageState extends State<LoginPage> {
           MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } else {
-        var logger = Logger();
         logger.d('Failed to login');
       }
     } catch (e) {
-      var logger = Logger();
       logger.d(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
-
   void printToken() async {
     var box = Hive.box('myBox');
     String? token = box.get('token');
-    var logger = Logger();
     logger.d('Token: $token');
   }
 
@@ -288,19 +292,21 @@ class LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: !_isLoading ? () {
                       login(
                           usernameController.text.toString(),
                           passwordController.text.toString());
-                    },
-                    child: Text(
-                      'Sign In',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 25,
-                      ),
-                    ),
+                    } : null,
+                    child: _isLoading
+                        ? CircularProgressIndicator()
+                        : Text(
+                            'Sign In',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 25,
+                            ),
+                          ),
                   ),
                   ),
 

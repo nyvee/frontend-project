@@ -1,10 +1,11 @@
-//import dependencies
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-//import pages
-import 'package:frontend_project/pages/login.dart';
-//import components
-import 'package:frontend_project/components/my_textfield.dart';
+import 'package:http/http.dart' as http;
+import 'package:hive/hive.dart';
+import 'login.dart';
+import 'package:logger/logger.dart';
+import 'package:frontend_project/components/password_text_field_conf.dart';
+import 'package:frontend_project/utils/size_config.dart';
 
 class ChangePass extends StatefulWidget {
   const ChangePass({Key? key}) : super(key: key);
@@ -16,30 +17,82 @@ class ChangePass extends StatefulWidget {
 class ChangePassState extends State<ChangePass> {
   final rppassController = TextEditingController();
   final rpcpassController = TextEditingController();
+  bool _isObscurePassword = true;
+  bool _isObscureConfirmPassword = true;
   bool isLoading = false;
+  bool isPasswordMatch = true;
+  final logger = Logger();
+  SizeConfig sizeConfig = SizeConfig();
 
-  void changepass() {
+  Future<void> changepass() async {
     setState(() {
       isLoading = true;
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
+    final box = Hive.box('myBox');
+    if (!box.containsKey('token')) {
+      logger.d('Token is not in the box');
       setState(() {
         isLoading = false;
       });
+      return;
+    }
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const LoginPage(),
-        ),
-      );
-    });
-  }
+    final String? token = box.get('token');
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
+    if (token != null) {
+      final headers = {'Authorization': 'Bearer $token'};
+
+      if (rppassController.text != rpcpassController.text) {
+        setState(() {
+          isPasswordMatch = false;
+          isLoading = false; 
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Passwords do not match'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+        return;
+      } else {
+        setState(() {
+          isPasswordMatch = true;
+        });
+      }
+
+      try {
+        final response = await http.post(
+          Uri.parse('https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/reset'),
+          body: {
+            'password': rppassController.text,
+          },
+          headers: headers,
+        );
+
+        if (response.statusCode == 200) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const LoginPage(),
+            ),
+          );
+          logger.d('Password Changed');
+        } else {
+          logger.d('Failed to change password');
+        }
+      } catch (e) {
+        logger.d('Error changing password: $e');
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } else {
+      print('Token is null');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -52,10 +105,7 @@ class ChangePassState extends State<ChangePass> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-
                 const SizedBox(height: 15),
-
-                //arrowback
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Align(
@@ -89,10 +139,7 @@ class ChangePassState extends State<ChangePass> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 75),
-
-                //reset pass label
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -109,10 +156,7 @@ class ChangePassState extends State<ChangePass> {
                     ],
                   ),
                 ),
-                
                 const SizedBox(height: 45),
-
-                //warning
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -146,10 +190,7 @@ class ChangePassState extends State<ChangePass> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 73),
-
-                //password label
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -166,18 +207,21 @@ class ChangePassState extends State<ChangePass> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 7),
-
-                //password field
-                MyTextField(
-                  controller: rppassController,
-                  obscureText: false,
+                SizedBox(
+                  width: sizeConfig.widthSize(context, 97),
+                  child: PasswordTextFieldE(
+                    controller: rppassController,
+                    isObscure: _isObscurePassword,
+                    onVisibilityChanged: (value) {
+                      setState(() {
+                        _isObscurePassword = value;
+                      });
+                    },
+                    isPasswordMatch: isPasswordMatch,
+                  ),
                 ),
-
                 const SizedBox(height: 10),
-
-                //confirm password
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Row(
@@ -194,13 +238,19 @@ class ChangePassState extends State<ChangePass> {
                     ],
                   ),
                 ),
-                
                 const SizedBox(height: 7),
-
-                //confirmpass field
-                MyTextField(
-                  controller: rpcpassController,
-                  obscureText: false,
+                SizedBox(
+                  width: sizeConfig.widthSize(context, 97),
+                  child: PasswordTextFieldE(
+                    controller: rpcpassController,
+                    isObscure: _isObscureConfirmPassword,
+                    onVisibilityChanged: (value) {
+                      setState(() {
+                        _isObscureConfirmPassword = value;
+                      });
+                    },
+                    isPasswordMatch: isPasswordMatch,
+                  ),
                 ),
                 const SizedBox(height: 30),
                 Container(
@@ -227,13 +277,13 @@ class ChangePassState extends State<ChangePass> {
                     child: isLoading
                         ? const CircularProgressIndicator()
                         : Text(
-                            "Reset Password",
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 25,
-                            ),
-                          ),
+                      "Reset Password",
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 25,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -243,4 +293,9 @@ class ChangePassState extends State<ChangePass> {
       ),
     );
   }
+}
+
+class TokenModel extends HiveObject {
+  @HiveField(0)
+  late String token;
 }

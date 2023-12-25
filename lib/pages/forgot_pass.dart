@@ -1,13 +1,11 @@
-//import dependencies
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-//import pages
-import 'package:frontend_project/pages/login.dart';
-//import components
-import 'package:frontend_project/components/my_textfield.dart';
-//import utils
+import 'package:http/http.dart' as http;
+import 'package:frontend_project/pages/otp_confirm.dart';
+import 'package:frontend_project/components/my_textfield_error.dart';
 import 'package:frontend_project/utils/size_config.dart';
-
+import 'dart:convert';
+import 'package:logger/logger.dart';
 class ForgotPass extends StatefulWidget {
   const ForgotPass({Key? key}) : super(key: key);
 
@@ -19,20 +17,51 @@ class ForgotPassState extends State<ForgotPass> {
   final fppemailController = TextEditingController();
   bool isLoading = false;
   SizeConfig sizeConfig = SizeConfig();
+  bool isEmailValid = true;
+  final logger = Logger();
 
-  void forgotPass() {
+
+  void forgotPass() async {
     setState(() {
       isLoading = true;
     });
 
-    // Simulate a delay for sign-in
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
+    var url = Uri.parse('https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/email');
+    var response = await http.post(url, body: {'email': fppemailController.text});
 
-      // Show the popup
+    if (response.statusCode == 200) {
+      logger.d('Response data: ${response.body}');
+      isEmailValid = true;
       showPopup(context);
+    } else {
+      logger.d('Failed to send email');
+      logger.d('Status code: ${response.statusCode}');
+      logger.d('Response body: ${response.body}');
+      isEmailValid = false;
+
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['message'] != null) {
+        logger.d('Server message: ${responseBody['message']}');
+      }
+
+      if (response.statusCode == 500 && responseBody['message'].contains('username')) {
+        setState(() {
+          isEmailValid = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No user found for that email.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } else {
+        throw Exception('Failed to send email');
+      }
+    }
+
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -77,9 +106,13 @@ class ForgotPassState extends State<ForgotPass> {
                     onPressed: () {
                       Future.delayed(const Duration(seconds: 1), () {
                         Navigator.of(context).pop();
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ));
+                        Future.microtask(() {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => const OtpCode(),
+                            ),
+                          );
+                        });
                       });
                     },
                     style: ElevatedButton.styleFrom(
@@ -115,10 +148,7 @@ class ForgotPassState extends State<ForgotPass> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-
                 const SizedBox(height: 15),
-
-                //backicon
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.0),
                   child: Align(
@@ -231,9 +261,10 @@ class ForgotPassState extends State<ForgotPass> {
                 //email field
                 SizedBox(
                   width: sizeConfig.widthSize(context, 97),
-                  child: MyTextField(
+                  child: MyTextFieldE(
                     controller: fppemailController,
                     obscureText: false,
+                    borderColor: isEmailValid ? Color(0xFFb6bbc4) : Colors.red,
                   ),
                 ),
 
@@ -264,13 +295,13 @@ class ForgotPassState extends State<ForgotPass> {
                     child: isLoading
                         ? const CircularProgressIndicator()
                         : Text(
-                            "Send",
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 25,
-                            ),
-                          ),
+                      "Send",
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 25,
+                      ),
+                    ),
                   ),
                 ),
               ],
