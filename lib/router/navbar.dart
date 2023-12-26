@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
-import '../pages/home.dart';
-import '../pages/explore.dart';
-import '../pages/cart.dart';
-import '../pages/transactions.dart';
-import '../pages/profile.dart';
+import '../pages/home_page.dart';
+import '../pages/explore_page.dart';
+import '../pages/cart_page.dart';
+import '../pages/transactions_page.dart';
+import '../pages/profile_page.dart';
 
 class MyBottomNavBar extends StatelessWidget {
   final PersistentTabController controller;
@@ -20,30 +20,33 @@ class MyBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return shouldShowNavBar()
-        ? PersistentTabView(
-            context,
-            controller: controller, // Use the provided controller directly
-            screens: _buildScreens(),
-            items: _navBarsItems(),
-            confineInSafeArea: true,
-            backgroundColor: Color.fromARGB(255, 240, 236, 229),
-            handleAndroidBackButtonPress: true,
-            resizeToAvoidBottomInset: true,
-            stateManagement: true,
-            hideNavigationBarWhenKeyboardShows: true,
-            decoration: const NavBarDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black54,
-                  blurRadius: 4.0,
-                ),
-              ],
-            ),
-            navBarStyle: NavBarStyle.style3,
-            onItemSelected: onItemSelected,
-          )
-        : SizedBox.shrink();
+    return PersistentTabView(
+      context,
+      controller: controller,
+      screens: _buildScreens(),
+      items: _navBarsItems(),
+      confineInSafeArea: true,
+      backgroundColor: Color.fromARGB(255, 240, 236, 229),
+      handleAndroidBackButtonPress: true,
+      resizeToAvoidBottomInset: true,
+      stateManagement: true,
+      hideNavigationBar: !showNavBar(),
+      hideNavigationBarWhenKeyboardShows: true,
+      decoration: const NavBarDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black54,
+            blurRadius: 4.0,
+          ),
+        ],
+      ),
+      navBarStyle: NavBarStyle.style3,
+      onItemSelected: (index) {
+        if (index != controller.index) {
+          onItemSelected(index);
+        }
+      },
+    );
   }
 
   List<Widget> _buildScreens() {
@@ -101,9 +104,7 @@ class MyBottomNavBar extends StatelessWidget {
     ];
   }
 
-  // should show navbar only on 5 pages
-  bool shouldShowNavBar() {
-    final int currentIndex = controller.index;
+  bool showNavBar() {
     return currentIndex == 0 ||
         currentIndex == 1 ||
         currentIndex == 2 ||

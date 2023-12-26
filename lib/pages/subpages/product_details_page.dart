@@ -1,34 +1,41 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../components/appbar.dart';
+import '../../components/top_app_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:hive_flutter/hive_flutter.dart';
 
-Future<Map<String, dynamic>> fetchProduct() async {
-  final response = await http.get(Uri.parse(
-      'https://gjq3q54r-8080.asse.devtunnels.ms/api/products/6584606ebe966f9cec6ebcd6')); // Url testing
+Future<Map<String, dynamic>> fetchProduct(String productId) async {
+  final response = await http.get(
+    Uri.parse(
+        'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products/$productId'),
+  );
 
   if (response.statusCode == 200) {
     Map<String, dynamic> product = jsonDecode(response.body);
-    return product['data']; // Return the product data
+    return product['data'];
   } else {
     throw Exception('Failed to load product');
   }
 }
 
 class ProductDetailsPage extends StatefulWidget {
+  final String productId;
+
+  ProductDetailsPage({required this.productId});
+
   @override
   _ProductDetailsPageState createState() => _ProductDetailsPageState();
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  Future<Map<String, dynamic>>? _productFuture;
+  late Future<Map<String, dynamic>> _productFuture;
   bool isOnWishlist = false;
 
   @override
   void initState() {
     super.initState();
-    _productFuture = fetchProduct();
+    _productFuture = fetchProduct(widget.productId);
   }
 
   @override
@@ -50,7 +57,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Widget buildProductDetailsPage(Map<String, dynamic> product) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 240, 236, 229),
-      appBar: MyAppBar(title: product['name'], showSettingsButton: false),
+      appBar: MyAppBar(
+        title: product['name'],
+        showSettingsButton: false,
+      ),
       body: ListView(
         children: [
           Image.network(
@@ -243,7 +253,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
                 child: const Text('Add to Cart'),
                 onPressed: () {
-                  // Handle add to cart button pressed
+                  addToCart(product);
                 },
               ),
             ),
@@ -251,5 +261,54 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         ),
       ),
     );
+  }
+
+  Future<void> addToCart(Map<String, dynamic> product) async {
+    final userId = Hive.box('myBox').get('userId');
+
+    try {
+      // Add a copy of the product to the cart, with an amount of 1.
+      Map<String, dynamic> productCopy = Map<String, dynamic>.from(product);
+      productCopy['quantity'] = 1;
+
+      // Fetch the current user data.
+      final userUrl =
+          Uri.parse('https://gjq3q54r-8080.asse.devtunnels.ms/user/$userId');
+      final userResponse = await http.get(userUrl, headers: {
+        'Content-Type': 'application/json',
+      });
+
+      if (userResponse.statusCode == 200) {
+        Map<String, dynamic> userData = jsonDecode(userResponse.body);
+
+        // Add the new product to the user's cart.
+        List<dynamic> cart = List<dynamic>.from(userData['data']['cart']);
+        cart.add(productCopy);
+        userData['data']['cart'] = cart;
+
+        // Update the user data on the server.
+        final updateResponse = await http.post(
+          userUrl,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(userData),
+        );
+
+        if (updateResponse.statusCode == 200) {
+          print('Product added to cart.');
+        } else {
+          print(
+              'Failed to add product to cart. Server responded with status code: ${updateResponse.statusCode}');
+          print('Response body: ${updateResponse.body}');
+        }
+      } else {
+        print(
+            'Failed to fetch user data. Server responded with status code: ${userResponse.statusCode}');
+        print('Response body: ${userResponse.body}');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
   }
 }

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:frontend_project/pages/subpages/settings_page.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool showSettingsButton;
+  final bool showBackButton;
 
-  MyAppBar({required this.title, this.showSettingsButton = false});
+  MyAppBar(
+      {required this.title,
+      this.showSettingsButton = false,
+      this.showBackButton = false});
 
   @override
   Widget build(BuildContext context) {
@@ -23,23 +28,25 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_rounded,
-          color: Color.fromARGB(255, 49, 48, 77),
-          size: 40,
-        ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
+      leading: showBackButton
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back_rounded),
+              color: Color.fromARGB(255, 49, 48, 77),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          : null,
       actions: showSettingsButton
           ? [
               IconButton(
                 icon: const Icon(Icons.settings_rounded),
                 color: Color.fromARGB(255, 49, 48, 77),
                 onPressed: () {
-                  // Handle settings button pressed
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  );
                 },
               ),
             ]

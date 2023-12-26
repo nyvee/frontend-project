@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 //import pages
-import 'package:frontend_project/pages/login.dart';
+import 'package:frontend_project/pages/authpages/login.dart';
 //import components
 import 'package:frontend_project/components/my_textfield.dart';
 
@@ -52,7 +52,6 @@ class ChangePassState extends State<ChangePass> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-
                 const SizedBox(height: 15),
 
                 //arrowback
@@ -109,7 +108,7 @@ class ChangePassState extends State<ChangePass> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 45),
 
                 //warning
@@ -194,7 +193,7 @@ class ChangePassState extends State<ChangePass> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 7),
 
                 //confirmpass field

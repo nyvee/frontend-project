@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 //import pages
-import 'package:frontend_project/pages/login.dart';
+import 'package:frontend_project/pages/authpages/login.dart';
 //import components
 import 'package:frontend_project/components/my_textfield.dart';
 //import utils
@@ -115,7 +115,6 @@ class ForgotPassState extends State<ForgotPass> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-
                 const SizedBox(height: 15),
 
                 //backicon

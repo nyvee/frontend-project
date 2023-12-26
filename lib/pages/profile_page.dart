@@ -1,15 +1,24 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import '../components/appbar.dart';
+import '../components/top_app_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:shimmer/shimmer.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path/path.dart' as path;
+import 'package:image/image.dart' as img;
+import 'package:mime/mime.dart';
 
-String token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTg2ZGI2YjA1OTBhZGE4YjhmOWI1MDEiLCJpYXQiOjE3MDMzNDY2NTksImV4cCI6MTcwNTkzODY1OX0.X1eZMjOa0qse1yFOHz5593JXMUvn7ETzbki7MPcZghc';
+final logger = Logger();
+
+String token = Hive.box('myBox').get('token');
 
 Future<Map<String, dynamic>> fetchProfile(String token, String id) async {
-  final url =
-      Uri.parse('https://gjq3q54r-8080.asse.devtunnels.ms/user/profile/$id');
+  final url = Uri.parse(
+      'https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/profile/$id');
   final response = await http.post(
     url,
     headers: {
@@ -22,14 +31,24 @@ Future<Map<String, dynamic>> fetchProfile(String token, String id) async {
     Map<String, dynamic> profile = jsonDecode(response.body);
     return profile['data'];
   } else {
-    print('Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    logger.e('Status code: ${response.statusCode}');
+    logger.e('Response body: ${response.body}');
     throw Exception('Failed to load profile');
   }
 }
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +62,7 @@ class ProfilePage extends StatelessWidget {
           if (snapshot.hasData) {
             String id = snapshot.data!['_id'];
             String avatarUrl =
-                'https://gjq3q54r-8080.asse.devtunnels.ms/user/avatar/$id';
+                'https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/avatar/$id';
             String username = snapshot.data!['username'];
             String firstName = snapshot.data!['firstName'];
             String lastName = snapshot.data!['lastName'];
@@ -56,7 +75,7 @@ class ProfilePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    buildProfilePicture(avatarUrl),
+                    buildProfilePicture(avatarUrl, id),
                     buildProfileInfo(
                       username,
                       firstName,
@@ -101,7 +120,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget buildProfilePicture(String avatarUrl) {
+  Widget buildProfilePicture(String avatarUrl, String id) {
     return Stack(
       children: [
         CircleAvatar(
@@ -120,7 +139,53 @@ class ProfilePage extends StatelessWidget {
                 Icons.edit,
                 color: Colors.white,
               ),
-              onPressed: () {},
+              onPressed: () async {
+                final ImagePicker picker = ImagePicker();
+                final XFile? image =
+                    await picker.pickImage(source: ImageSource.gallery);
+                if (image != null) {
+                  logger.i('Image selected: ${image.path}');
+
+                  // Extract the file name from the path
+                  final fileName = image.path.split('/').last;
+                  logger.i('File name: $fileName');
+
+                  logger.i("File extension: ${path.extension(image.path)}");
+                  final mimeType = lookupMimeType(image.path);
+                  if (mimeType != null && mimeType.startsWith('image/')) {
+                    // File is an image
+                    try {
+                      final imageFile = File(image.path);
+                      img.decodeImage(imageFile.readAsBytesSync());
+                      final url = Uri.parse(
+                          'https://gjq3q54r-8080.asse.devtunnels.ms/user/avatar');
+                      final request = http.MultipartRequest('POST', url)
+                        ..headers['Authorization'] = 'Bearer $token'
+                        ..files.add(await http.MultipartFile.fromPath(
+                            'avatar', image.path));
+                      try {
+                        final response = await request.send();
+                        if (response.statusCode == 200) {
+                          logger.i('Avatar updated');
+                          setState(() {});
+                        } else {
+                          logger.e('Status code: ${response.statusCode}');
+                          logger.e(
+                              'Response body: ${await response.stream.bytesToString()}');
+                        }
+                      } catch (error) {
+                        logger.e('Error uploading avatar: $error');
+                      }
+                    } catch (e) {
+                      logger.e("Error: File is not an image - $e");
+                    }
+                  } else {
+                    logger.e('Selected file is not an image');
+                  }
+                } else {
+                  logger.e('Image selection cancelled');
+                }
+              },
             ),
           ),
         ),

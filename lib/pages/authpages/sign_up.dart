@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:http/http.dart';
 //import pages
-import 'package:frontend_project/pages/login.dart';
+import 'package:frontend_project/pages/authpages/login.dart';
 //import components
 import 'package:frontend_project/components/square_tile.dart';
 import 'package:frontend_project/components/my_textfield.dart';
@@ -39,15 +39,29 @@ class SignUpPageState extends State<SignUpPage> {
     String password,
     String confirmPassword,
   ) async {
+    if (username.isEmpty ||
+        email.isEmpty ||
+        firstName.isEmpty ||
+        lastName.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All fields are required!')),
+      );
+      return;
+    }
+
     if (password != confirmPassword) {
-      var logger = Logger();
-      logger.d('Passwords do not match');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match!')),
+      );
       return;
     }
 
     try {
       Response response = await post(
-        Uri.parse('https://gjq3q54r-8080.asse.devtunnels.ms/user/register'),
+        Uri.parse(
+            'https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/register'),
         body: {
           'username': username,
           'email': email,
@@ -58,25 +72,26 @@ class SignUpPageState extends State<SignUpPage> {
       );
 
       if (response.statusCode == 200) {
-     var logger = Logger();
-     logger.d('Account Created');
-     Navigator.pushReplacement(
-       context,
-       MaterialPageRoute(builder: (context) => LoginPage()),
-     );
-   } else if (response.statusCode == 400) {
-     ScaffoldMessenger.of(context).showSnackBar(
-       SnackBar(content: Text('The username is used, use another username!')),
-     );
-   } else {
-     var logger = Logger();
-     logger.d('Failed to create account');
-   }
- } catch (e) {
-   var logger = Logger();
-   logger.d(e.toString());
- }
-}
+        var logger = Logger();
+        logger.d('Account Created');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      } else if (response.statusCode == 400) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('The username is used, use another username!')),
+        );
+      } else {
+        var logger = Logger();
+        logger.d('Failed to create account');
+      }
+    } catch (e) {
+      var logger = Logger();
+      logger.d(e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

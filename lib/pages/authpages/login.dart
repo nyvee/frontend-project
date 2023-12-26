@@ -5,11 +5,12 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'dart:convert';
 import 'package:logger/logger.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 // Import Pages
-import 'package:frontend_project/pages/forgot_pass.dart';
-import 'package:frontend_project/pages/home_page.dart';
-import 'package:frontend_project/pages/sign_up.dart';
+import 'package:frontend_project/pages/authpages/forgot_pass.dart';
+import 'package:frontend_project/main.dart';
+import 'package:frontend_project/pages/authpages/sign_up.dart';
 
 // Import Components
 import 'package:frontend_project/components/my_textfield.dart';
@@ -38,10 +39,10 @@ class LoginPageState extends State<LoginPage> {
   // Instantiate SizeConfig
   SizeConfig sizeConfig = SizeConfig();
 
-  void login(String username, password) async {
+  void login(String username, String password, BuildContext context) async {
     try {
       Response response = await post(
-        Uri.parse('https://gjq3q54r-8080.asse.devtunnels.ms/user/login'),
+        Uri.parse('https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/login'),
         body: {
           'username': username,
           'password': password,
@@ -52,15 +53,21 @@ class LoginPageState extends State<LoginPage> {
         Map<String, dynamic> responseBody = jsonDecode(response.body);
         String token = responseBody['token'];
 
+        Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
+        String? userId = decodedToken['_id'];
+
         var box = Hive.box('myBox');
         box.put('token', token);
+        box.put('userId', userId);
 
         var logger = Logger();
         logger.d('Login successfully');
         printToken();
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(
+            builder: (context) => MyHomePage(),
+          ),
         );
       } else {
         var logger = Logger();
@@ -77,6 +84,24 @@ class LoginPageState extends State<LoginPage> {
     String? token = box.get('token');
     var logger = Logger();
     logger.d('Token: $token');
+
+    if (token != null) {
+      Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
+
+      // Assuming the user ID is stored in the 'user_id' claim
+      String? userId = decodedToken['_id'];
+
+      if (userId != null) {
+        var logger = Logger();
+        logger.d('User ID: $userId');
+      } else {
+        var logger = Logger();
+        logger.d('User ID not found in the token.');
+      }
+    } else {
+      var logger = Logger();
+      logger.d('Token not found in the Hive box.');
+    }
   }
 
   @override
@@ -92,7 +117,6 @@ class LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-
                 const SizedBox(height: 15),
 
                 // Back Arrow Icon
@@ -281,7 +305,9 @@ class LoginPageState extends State<LoginPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF31314D),
                       minimumSize: Size(
-                          screenWidth > 600 ? screenWidth * 0.4 : screenWidth * 0.85,
+                          screenWidth > 600
+                              ? screenWidth * 0.4
+                              : screenWidth * 0.85,
                           63),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -290,8 +316,10 @@ class LoginPageState extends State<LoginPage> {
                     ),
                     onPressed: () {
                       login(
-                          usernameController.text.toString(),
-                          passwordController.text.toString());
+                        usernameController.text.toString(),
+                        passwordController.text.toString(),
+                        context,
+                      );
                     },
                     child: Text(
                       'Sign In',
@@ -302,10 +330,10 @@ class LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  ),
+                ),
 
                 const SizedBox(height: 15),
-                
+
                 // Don't Have an Account Label
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
