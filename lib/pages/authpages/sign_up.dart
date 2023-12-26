@@ -1,15 +1,12 @@
-//import dependencies
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:http/http.dart';
-//import pages
-import 'package:frontend_project/pages/authpages/login.dart';
-//import components
+import '/pages/authpages/login.dart';
 import 'package:frontend_project/components/square_tile.dart';
 import 'package:frontend_project/components/my_textfield.dart';
-import 'package:frontend_project/components/password_text_field.dart';
-//import utils
+import 'package:frontend_project/components/my_textfield_username.dart';
+import 'package:frontend_project/components/password_text_field_conf.dart';
 import 'package:frontend_project/utils/size_config.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -26,10 +23,34 @@ class SignUpPageState extends State<SignUpPage> {
   final signuplastNameController = TextEditingController();
   final signuppassController = TextEditingController();
   final signupconfirmpassController = TextEditingController();
-  bool isLoading = false;
+  bool _isLoading = false;
   bool _isObscurePassword = true;
   bool _isObscureConfirmPassword = true;
+  bool isPasswordMatch = true;
   SizeConfig sizeConfig = SizeConfig();
+  bool isUsernameTaken = false;
+
+  final InputDecoration normalInputDecoration = InputDecoration(
+    enabledBorder: OutlineInputBorder(
+      borderSide: const BorderSide(color: Color(0xFFb6bbc4), width: 2),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: const BorderSide(color: Color(0xFFb6bbc4), width: 2),
+      borderRadius: BorderRadius.circular(10),
+    ),
+  );
+
+  final InputDecoration usernameInputDecoration = InputDecoration(
+    enabledBorder: OutlineInputBorder(
+      borderSide: const BorderSide(color: Colors.red, width: 2),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: const BorderSide(color: Colors.red, width: 2),
+      borderRadius: BorderRadius.circular(10),
+    ),
+  );
 
   void signUp(
     String username,
@@ -39,24 +60,24 @@ class SignUpPageState extends State<SignUpPage> {
     String password,
     String confirmPassword,
   ) async {
-    if (username.isEmpty ||
-        email.isEmpty ||
-        firstName.isEmpty ||
-        lastName.isEmpty ||
-        password.isEmpty ||
-        confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('All fields are required!')),
-      );
-      return;
-    }
+    setState(() {
+      _isLoading = true;
+    });
 
-    if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match!')),
-      );
-      return;
-    }
+    setState(() {
+      if (password != confirmPassword) {
+        isPasswordMatch = false;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Passwords do not match!')),
+        );
+        _isLoading = false;
+        return;
+      } else {
+        isPasswordMatch = true;
+      }
+    });
+
+    if (!isPasswordMatch) return;
 
     try {
       Response response = await post(
@@ -79,6 +100,9 @@ class SignUpPageState extends State<SignUpPage> {
           MaterialPageRoute(builder: (context) => LoginPage()),
         );
       } else if (response.statusCode == 400) {
+        setState(() {
+          isUsernameTaken = true;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text('The username is used, use another username!')),
@@ -90,6 +114,10 @@ class SignUpPageState extends State<SignUpPage> {
     } catch (e) {
       var logger = Logger();
       logger.d(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -201,9 +229,12 @@ class SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 7),
                 SizedBox(
                   width: sizeConfig.widthSize(context, 97),
-                  child: MyTextField(
+                  child: MyTextFieldU(
                     controller: signupuserController,
                     obscureText: false,
+                    decoration: isUsernameTaken
+                        ? usernameInputDecoration
+                        : normalInputDecoration,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -301,7 +332,7 @@ class SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 10),
                 SizedBox(
                   width: sizeConfig.widthSize(context, 97),
-                  child: PasswordTextField(
+                  child: PasswordTextFieldE(
                     controller: signuppassController,
                     isObscure: _isObscurePassword,
                     onVisibilityChanged: (value) {
@@ -309,6 +340,7 @@ class SignUpPageState extends State<SignUpPage> {
                         _isObscurePassword = value;
                       });
                     },
+                    isPasswordMatch: isPasswordMatch,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -331,7 +363,7 @@ class SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 10),
                 SizedBox(
                   width: sizeConfig.widthSize(context, 97),
-                  child: PasswordTextField(
+                  child: PasswordTextFieldE(
                     controller: signupconfirmpassController,
                     isObscure: _isObscureConfirmPassword,
                     onVisibilityChanged: (value) {
@@ -339,6 +371,7 @@ class SignUpPageState extends State<SignUpPage> {
                         _isObscureConfirmPassword = value;
                       });
                     },
+                    isPasswordMatch: isPasswordMatch,
                   ),
                 ),
                 const SizedBox(height: 50),
@@ -357,33 +390,38 @@ class SignUpPageState extends State<SignUpPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF31314D),
                       minimumSize: Size(
-                          screenWidth > 600
-                              ? screenWidth * 0.4
-                              : screenWidth * 0.85,
-                          63),
+                        screenWidth > 600
+                            ? screenWidth * 0.4
+                            : screenWidth * 0.85,
+                        63,
+                      ),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {
-                      signUp(
-                        signupuserController.text.toString(),
-                        signupemailController.text.toString(),
-                        signupfirstNameController.text.toString(),
-                        signuplastNameController.text.toString(),
-                        signuppassController.text.toString(),
-                        signupconfirmpassController.text.toString(),
-                      );
-                    },
-                    child: Text(
-                      'Sign Up',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 25,
-                      ),
-                    ),
+                    onPressed: !_isLoading
+                        ? () {
+                            signUp(
+                              signupuserController.text.toString(),
+                              signupemailController.text.toString(),
+                              signupfirstNameController.text.toString(),
+                              signuplastNameController.text.toString(),
+                              signuppassController.text.toString(),
+                              signupconfirmpassController.text.toString(),
+                            );
+                          }
+                        : null,
+                    child: _isLoading
+                        ? CircularProgressIndicator()
+                        : Text(
+                            'Sign Up',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 25,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 10),

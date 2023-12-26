@@ -46,8 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: MyBottomNavBar(
         controller: _controller,
         currentIndex: _controller.index,
-        onItemSelected:
-            _onItemSelected, // Set the flag to true for the main home page
+        onItemSelected: _onItemSelected,
       ),
     );
   }
@@ -59,15 +58,10 @@ class AppEntryPoint extends StatelessWidget {
     var box = Hive.box('myBox');
     var token = box.get('token');
 
-    // Check if the user is logged in
     if (token == null) {
-      // If not logged in, show the login page
       return LoginPage();
     } else {
-      // If logged in, show the home page with bottom navigation bar
       return MyHomePage();
     }
   }
 }
-
-// Semua kecuali 5 pages Home, Explore, Cart, Transactions, Profile

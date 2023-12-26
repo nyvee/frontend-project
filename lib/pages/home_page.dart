@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_project/components/carousel.dart';
 import 'package:frontend_project/components/item_card.dart';
 import 'package:http/http.dart' as http;
+import 'subpages/search_bar.dart';
 
 class Product {
   final String name;
@@ -45,25 +46,6 @@ class _HomePageState extends State<HomePage> {
   late List<Product> _recommendedProductsContainer1 = [];
   late List<Product> _recommendedProductsContainer2 = [];
   bool _recommendedProductsLoaded = false;
-
-  // void _startTimer() {
-  //   _timer = Timer.periodic(Duration(seconds: 2), (Timer timer) {
-  //     if (_currentPage < 5) {
-  //       _currentPage++;
-  //     } else {
-  //       _currentPage = 0;
-  //     }
-  //     _pageController.animateToPage(
-  //       _currentPage,
-  //       duration: Duration(milliseconds: 300),
-  //       curve: Curves.easeInOut,
-  //     );
-  //   });
-  // }
-
-  // void _stopTimer() {
-  //   _timer.cancel();
-  // }
 
   Future<List<Product>> fetchProducts() async {
     final url = 'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products';
@@ -108,6 +90,24 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Widget _buildIconContainer(IconData iconData) {
+    return Container(
+      width: 40.0,
+      height: 40.0,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(
+          color: const Color(0xFF31314D),
+          width: 2.2,
+        ),
+        color: Colors.transparent,
+      ),
+      child: Center(
+        child: Icon(iconData, color: const Color(0xFF31314D)),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     // _stopTimer();
@@ -121,66 +121,74 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFF0ECE5),
+        backgroundColor: Color(0xFFF0EBE5),
         elevation: 6,
-        toolbarHeight: 125.0, // Adjusted height for better alignment
+        toolbarHeight: 125.0,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
-                  child: Container(
-                    height: 40.0,
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(color: const Color(0xFF31304D)),
-                      color: const Color(0xFFF0ECE5),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.search, color: Color(0xFF31304D)),
-                        const SizedBox(width: 8.0),
-                        Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 16.5),
-                            ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 220,
+                      height: 40,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(
+                            color: const Color(0xFF31304D),
+                            width: 2.2,
                           ),
+                          color: const Color(0xFFF0EBE5),
                         ),
-                      ],
+                        child: Row(
+                          children: [
+                            const Icon(Icons.search, color: Color(0xFF31304D)),
+                            const SizedBox(
+                              width: 5,
+                              height: 0,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                style: const TextStyle(
+                                    fontSize: 18.0, height: 1.2),
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 12.0),
+                                  isDense: true,
+                                ),
+                                onSubmitted: (productName) {
+                                  if (productName.isNotEmpty) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Searchh(),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 16.0),
-                Container(
-                  width: 40.0,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(color: const Color(0xFF31304D)),
-                    color: Colors.transparent,
-                  ),
-                  child: Center(
-                    child: const Icon(Icons.favorite, color: Color(0xFF31304D)),
-                  ),
-                ),
-                const SizedBox(width: 16.0),
-                Container(
-                  width: 40.0,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(color: const Color(0xFF31304D)),
-                    color: Colors.transparent,
-                  ),
-                  child: Center(
-                    child: const Icon(Icons.notifications,
-                        color: Color(0xFF31304D)),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 0.0),
+                      child: Row(
+                        children: [
+                          _buildIconContainer(Icons.favorite_border),
+                          const SizedBox(width: 18.0),
+                          _buildIconContainer(Icons.notifications_none),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

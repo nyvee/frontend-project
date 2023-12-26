@@ -3,15 +3,19 @@ import 'package:google_fonts/google_fonts.dart';
 
 class SquareTile extends StatelessWidget {
   final String buttonText;
+  final VoidCallback? onPressed;
 
   const SquareTile({
     Key? key,
     required this.buttonText,
+    this.onPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
       width: 350,
       height: 60,
       padding: const EdgeInsets.all(10),
@@ -51,6 +55,7 @@ class SquareTile extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -13,7 +13,10 @@ class PrivacyPageState extends State<PrivacyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: 'Privacy Policy', showSettingsButton: false),
+      appBar: MyAppBar(
+        showBackButton: true,
+        title: 'Privacy Policy',
+      ),
       body: const BodyPage(),
       backgroundColor: const Color(0xffF0ECE5),
     );

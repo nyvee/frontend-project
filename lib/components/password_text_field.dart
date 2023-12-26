@@ -28,19 +28,13 @@ class PasswordTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                  color: Color.fromARGB(255, 49, 48, 77), width: 2),
+              borderSide: const BorderSide(color: Color(0xFFb6bbc4), width: 2),
               borderRadius: BorderRadius.circular(10),
             ),
             fillColor: const Color(0xFFF0EBE5),
             filled: true,
             suffixIcon: IconButton(
-              icon: Icon(
-                isObscure ? Icons.visibility : Icons.visibility_off,
-                color: isObscure
-                    ? const Color(0xFFb6bbc4)
-                    : const Color.fromARGB(255, 49, 48, 77),
-              ),
+              icon: Icon(isObscure ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
                 onVisibilityChanged(!isObscure);
               },

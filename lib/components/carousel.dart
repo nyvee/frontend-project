@@ -57,9 +57,6 @@ class _CarouselState extends State<Carousel> {
                     ),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  child: Center(
-                    child: Text('Product ${index + 1}'),
-                  ),
                 );
               },
               onPageChanged: (int page) {

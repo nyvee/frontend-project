@@ -52,8 +52,9 @@ dependencies:
   mime: ^1.0.4
   jwt_decode: ^0.3.1
   flutter_launcher_icons: ^0.13.1
+  url_launcher: ^6.1.14
 
-flutter_launcher_icons:
+flutter_icons:
   android: true
   ios: true
   image_path: "lib/images/myLogo.png"

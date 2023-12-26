@@ -158,7 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       final imageFile = File(image.path);
                       img.decodeImage(imageFile.readAsBytesSync());
                       final url = Uri.parse(
-                          'https://gjq3q54r-8080.asse.devtunnels.ms/user/avatar');
+                          'https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/avatar');
                       final request = http.MultipartRequest('POST', url)
                         ..headers['Authorization'] = 'Bearer $token'
                         ..files.add(await http.MultipartFile.fromPath(

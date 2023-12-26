@@ -1,9 +1,15 @@
 import 'dart:convert';
+// import 'dart:html';
 import 'package:flutter/material.dart';
 import '../../components/top_app_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
+String token = Hive.box('myBox').get('token');
 
 Future<Map<String, dynamic>> fetchProduct(String productId) async {
   final response = await http.get(
@@ -58,8 +64,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 240, 236, 229),
       appBar: MyAppBar(
+        showBackButton: true,
         title: product['name'],
-        showSettingsButton: false,
       ),
       body: ListView(
         children: [
@@ -109,7 +115,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           Padding(
             padding: const EdgeInsets.only(left: 20.0, right: 20.0),
             child: Text(
-              '\Rp${product['price']}',
+              NumberFormat.currency(
+                locale: 'id_ID',
+                symbol: 'Rp',
+                decimalDigits: 0,
+              ).format(product['price']),
               style: GoogleFonts.montserrat(
                 textStyle: TextStyle(
                     fontSize: 24,
@@ -228,9 +238,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   elevation: 0, // remove shadow
                 ),
                 child: const Text('Buy Now'),
-                onPressed: () {
-                  // Handle add to cart button pressed
-                },
+                onPressed: () {},
               ),
             ),
             Padding(
@@ -253,7 +261,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
                 child: const Text('Add to Cart'),
                 onPressed: () {
-                  addToCart(product);
+                  addToCart(product['_id'], 1);
                 },
               ),
             ),
@@ -262,53 +270,29 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       ),
     );
   }
+}
 
-  Future<void> addToCart(Map<String, dynamic> product) async {
-    final userId = Hive.box('myBox').get('userId');
+Future<void> addToCart(String productId, int quantity) async {
+  final url = Uri.parse(
+      'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products/$productId/cart');
+  final response = await http.post(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'productId': productId,
+      'quantity': quantity,
+    }),
+  );
+  logger.i('Response status: ${response.statusCode}');
+  logger.i('Response body: ${response.body}');
 
-    try {
-      // Add a copy of the product to the cart, with an amount of 1.
-      Map<String, dynamic> productCopy = Map<String, dynamic>.from(product);
-      productCopy['quantity'] = 1;
-
-      // Fetch the current user data.
-      final userUrl =
-          Uri.parse('https://gjq3q54r-8080.asse.devtunnels.ms/user/$userId');
-      final userResponse = await http.get(userUrl, headers: {
-        'Content-Type': 'application/json',
-      });
-
-      if (userResponse.statusCode == 200) {
-        Map<String, dynamic> userData = jsonDecode(userResponse.body);
-
-        // Add the new product to the user's cart.
-        List<dynamic> cart = List<dynamic>.from(userData['data']['cart']);
-        cart.add(productCopy);
-        userData['data']['cart'] = cart;
-
-        // Update the user data on the server.
-        final updateResponse = await http.post(
-          userUrl,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode(userData),
-        );
-
-        if (updateResponse.statusCode == 200) {
-          print('Product added to cart.');
-        } else {
-          print(
-              'Failed to add product to cart. Server responded with status code: ${updateResponse.statusCode}');
-          print('Response body: ${updateResponse.body}');
-        }
-      } else {
-        print(
-            'Failed to fetch user data. Server responded with status code: ${userResponse.statusCode}');
-        print('Response body: ${userResponse.body}');
-      }
-    } catch (error) {
-      print('Error: $error');
-    }
+  if (response.statusCode == 200) {
+    Map<String, dynamic> product = jsonDecode(response.body);
+    logger.i('Product: $product');
+  } else {
+    throw Exception('Failed to load product');
   }
 }
