@@ -23,7 +23,15 @@ class CheckoutPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Checkout"),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
+      
       body: ListView(
         children: [
           ListTile(
@@ -49,16 +57,38 @@ class CheckoutPage extends StatelessWidget {
             title: Text("Payment"),
             trailing: Text("Bank X"),
           ),
-          ListTile(
-            title: Text("Total price"),
-            trailing: Text("Rp3.980.000"),
-          ),
-          ListTile(
-            leading: Icon(Icons.shopping_cart),
-            title: Text("Buy"),
-            onTap: () {
-              // Do something when the buy button is tapped.
-            },
+          Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Total price",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 4.0),
+                Text(
+                  "Rp3.980.000",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8.0),
+                Container(
+                  color: Colors.black,
+                  padding: EdgeInsets.all(16.0),
+                  child: ListTile(
+                    leading: Icon(Icons.shopping_cart, color: Colors.white),
+                    title: Text(
+                      "Buy",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {
+                      // Do something when the buy button is tapped.
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
