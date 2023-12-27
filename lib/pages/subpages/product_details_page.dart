@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 // import 'dart:html';
 import 'package:flutter/material.dart';
@@ -28,7 +30,7 @@ Future<Map<String, dynamic>> fetchProduct(String productId) async {
 class ProductDetailsPage extends StatefulWidget {
   final String productId;
 
-  ProductDetailsPage({required this.productId});
+  const ProductDetailsPage({super.key, required this.productId});
 
   @override
   _ProductDetailsPageState createState() => _ProductDetailsPageState();
@@ -50,7 +52,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       future: _productFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -62,7 +64,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   Widget buildProductDetailsPage(Map<String, dynamic> product) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 240, 236, 229),
+      backgroundColor: const Color.fromARGB(255, 240, 236, 229),
       appBar: MyAppBar(
         showBackButton: true,
         title: product['name'],
@@ -80,7 +82,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Text(
               product['name'],
               style: GoogleFonts.montserrat(
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 49, 48, 77)),
@@ -92,7 +94,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             padding: const EdgeInsets.only(left: 20.0, right: 20.0),
             child: Text(product['overview'],
                 style: GoogleFonts.montserrat(
-                  textStyle: TextStyle(
+                  textStyle: const TextStyle(
                     fontSize: 14,
                     color: Color.fromARGB(255, 49, 48, 77),
                   ),
@@ -104,7 +106,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Text(
               'Quantity: ${product['quantity']}',
               style: GoogleFonts.montserrat(
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 49, 48, 77)),
@@ -121,7 +123,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 decimalDigits: 0,
               ).format(product['price']),
               style: GoogleFonts.montserrat(
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 49, 48, 77)),
@@ -129,18 +131,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             ),
           ),
           const SizedBox(height: 10),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 49, 48, 77),
             thickness: 1,
             indent: 20,
             endIndent: 20,
           ),
           const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+          const Padding(
+            padding: EdgeInsets.only(left: 20.0, right: 20.0),
             child: Text(
               'Details',
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 49, 48, 77)),
@@ -161,7 +163,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Text(
               'Rating: ${product['rating']}',
               style: GoogleFonts.montserrat(
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 49, 48, 77)),
@@ -174,7 +176,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Text(
               'Reviews: ${product['numReviews']}',
               style: GoogleFonts.montserrat(
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                     fontSize: 16, color: Color.fromARGB(255, 49, 48, 77)),
               ),
             ),
@@ -189,7 +191,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Padding(
-              padding: EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(5.0),
               child: InkWell(
                 onTap: () {
                   // Handle favorite/wishlist button pressed
@@ -202,36 +204,36 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   height: 40,
                   decoration: BoxDecoration(
                     color: isOnWishlist
-                        ? Color.fromARGB(255, 49, 48, 77)
-                        : Color.fromARGB(255, 240, 236, 229),
+                        ? const Color.fromARGB(255, 49, 48, 77)
+                        : const Color.fromARGB(255, 240, 236, 229),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Color.fromARGB(255, 49, 48, 77),
+                      color: const Color.fromARGB(255, 49, 48, 77),
                       width: 2,
                     ),
                   ),
                   child: Icon(
                     isOnWishlist ? Icons.favorite : Icons.favorite_border,
                     color: isOnWishlist
-                        ? Color.fromARGB(255, 240, 236, 229)
-                        : Color.fromARGB(255, 49, 48, 77),
+                        ? const Color.fromARGB(255, 240, 236, 229)
+                        : const Color.fromARGB(255, 49, 48, 77),
                   ),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(5.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                      Color.fromARGB(255, 49, 48, 77), // background color
+                      const Color.fromARGB(255, 49, 48, 77), // background color
                   foregroundColor:
-                      Color.fromARGB(255, 240, 236, 229), // text color
+                      const Color.fromARGB(255, 240, 236, 229), // text color
                   padding: const EdgeInsets.fromLTRB(
                       40, 10, 40, 10), // inner padding
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
-                    side: BorderSide(
+                    side: const BorderSide(
                         color: Color.fromARGB(255, 49, 48, 77),
                         width: 2), // border color and width
                   ),
@@ -242,18 +244,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(5.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Color.fromARGB(255, 240, 236, 229), // background color
+                  backgroundColor: const Color.fromARGB(
+                      255, 240, 236, 229), // background color
                   foregroundColor:
-                      Color.fromARGB(255, 49, 48, 77), // text color
+                      const Color.fromARGB(255, 49, 48, 77), // text color
                   padding: const EdgeInsets.fromLTRB(
                       20, 10, 20, 10), // inner padding
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
-                    side: BorderSide(
+                    side: const BorderSide(
                         color: Color.fromARGB(255, 49, 48, 77),
                         width: 2), // border color and width
                   ),

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend_project/components/top_app_bar.dart';
@@ -7,6 +9,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 final userId = Hive.box('myBox').get('userId');
 
 class TransactionsPage extends StatefulWidget {
+  const TransactionsPage({super.key});
+
   @override
   _TransactionsPageState createState() => _TransactionsPageState();
 }
@@ -68,14 +72,14 @@ class _TransactionsPageState extends State<TransactionsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Produk Tidak Ditemukan'),
-          content: Text('Maaf, produk yang Anda cari tidak ditemukan.'),
+          title: const Text('Produk Tidak Ditemukan'),
+          content: const Text('Maaf, produk yang Anda cari tidak ditemukan.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -86,7 +90,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
+      appBar: const MyAppBar(
         title: 'Transactions',
         showSettingsButton: false,
         showBackButton: false,
@@ -115,7 +119,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                       child: Icon(Icons.search, color: Color(0xFF31304D)),
                     ),
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                         height: 30.0,
                         child: TextField(
                           textAlignVertical: TextAlignVertical.center,
@@ -161,9 +165,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            color: Color.fromARGB(255, 255, 255, 255),
+            color: const Color.fromARGB(255, 255, 255, 255),
             child: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -171,13 +175,13 @@ class _TransactionsPageState extends State<TransactionsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${_formatDate(transaction.date)}',
-                        style: TextStyle(
+                        _formatDate(transaction.date),
+                        style: const TextStyle(
                             fontSize: 14.0, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 6.0),
+                      const SizedBox(height: 6.0),
                       Text(
-                        '${_formatTime(transaction.date)}',
+                        _formatTime(transaction.date),
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 12.0,
@@ -185,18 +189,18 @@ class _TransactionsPageState extends State<TransactionsPage> {
                       ),
                     ],
                   ),
-                  SizedBox(width: 8.0),
-                  Icon(Icons.more_vert, color: Color(0xFF31304D)),
+                  const SizedBox(width: 8.0),
+                  const Icon(Icons.more_vert, color: Color(0xFF31304D)),
                 ],
               ),
             ),
           ),
-          Divider(
+          const Divider(
             color: Color(0xFF31304D),
             thickness: 1.5,
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
                 Container(
@@ -208,26 +212,26 @@ class _TransactionsPageState extends State<TransactionsPage> {
                           transaction.image,
                           fit: BoxFit.cover,
                         )
-                      : Placeholder(),
+                      : const Placeholder(),
                 ),
-                SizedBox(width: 12.0),
+                const SizedBox(width: 12.0),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      SizedBox(height: 4.0),
+                      const SizedBox(height: 4.0),
                       Text(
                         transaction.name,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 2.0),
+                      const SizedBox(height: 2.0),
                       Text(
                         transaction.overview,
                         style:
                             TextStyle(fontSize: 13.0, color: Colors.grey[700]),
                       ),
-                      SizedBox(height: 12.0),
+                      const SizedBox(height: 12.0),
                       Text(
                         'Rp. ${transaction.price}',
                         style: TextStyle(color: Colors.grey[700]),
@@ -235,7 +239,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                     ],
                   ),
                 ),
-                SizedBox(width: 4.0),
+                const SizedBox(width: 4.0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -244,12 +248,13 @@ class _TransactionsPageState extends State<TransactionsPage> {
                         // Handle button press
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 255, 255, 255),
-                        side: BorderSide(color: Color(0xFF31304D)),
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 255, 255),
+                        side: const BorderSide(color: Color(0xFF31304D)),
                       ),
                       child: Text(
                         transaction.orderStatus,
-                        style: TextStyle(color: Color(0xFF31304D)),
+                        style: const TextStyle(color: Color(0xFF31304D)),
                       ),
                     ),
                   ],

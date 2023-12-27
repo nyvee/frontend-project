@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
@@ -97,14 +99,14 @@ class SignUpPageState extends State<SignUpPage> {
         logger.d('Account Created');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
+          MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       } else if (response.statusCode == 400) {
         setState(() {
           isUsernameTaken = true;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
               content: Text('The username is used, use another username!')),
         );
       } else {
@@ -413,7 +415,7 @@ class SignUpPageState extends State<SignUpPage> {
                           }
                         : null,
                     child: _isLoading
-                        ? CircularProgressIndicator()
+                        ? const CircularProgressIndicator()
                         : Text(
                             'Sign Up',
                             style: GoogleFonts.montserrat(

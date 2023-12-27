@@ -7,8 +7,9 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showSettingsButton;
   final bool showBackButton;
 
-  MyAppBar(
-      {required this.title,
+  const MyAppBar(
+      {super.key,
+      required this.title,
       this.showSettingsButton = false,
       this.showBackButton = false});
 
@@ -20,7 +21,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         title,
         style: GoogleFonts.montserrat(
-          textStyle: TextStyle(
+          textStyle: const TextStyle(
             color: Color.fromARGB(255, 49, 48, 77),
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -31,7 +32,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: showBackButton
           ? IconButton(
               icon: const Icon(Icons.arrow_back_rounded),
-              color: Color.fromARGB(255, 49, 48, 77),
+              color: const Color.fromARGB(255, 49, 48, 77),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -41,11 +42,12 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? [
               IconButton(
                 icon: const Icon(Icons.settings_rounded),
-                color: Color.fromARGB(255, 49, 48, 77),
+                color: const Color.fromARGB(255, 49, 48, 77),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const SettingsPage()),
                   );
                 },
               ),
@@ -55,5 +57,5 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

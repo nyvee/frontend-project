@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -53,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 240, 236, 229),
-      appBar: MyAppBar(title: 'Profile', showSettingsButton: true),
+      appBar: const MyAppBar(title: 'Profile', showSettingsButton: true),
       body: FutureBuilder<Map<String, dynamic>>(
         future: fetchProfile(token, ''),
         builder: (BuildContext context,
@@ -101,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Container(
                         width: 240,
                         height: 240,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                         ),

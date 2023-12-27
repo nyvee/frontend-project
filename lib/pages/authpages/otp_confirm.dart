@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +29,8 @@ class OtpCodeState extends State<OtpCode> {
       isLoading = true;
     });
 
-    final apiEndpoint = 'https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/otp';
+    const apiEndpoint =
+        'https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/otp';
 
     try {
       String otp = otpControllers.map((controller) => controller.text).join();
@@ -83,7 +86,7 @@ class OtpCodeState extends State<OtpCode> {
               textAlign: TextAlign.center,
               keyboardType: TextInputType.number,
               maxLength: 1,
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24),
               decoration: InputDecoration(
                 counterText: "",
                 focusedBorder: OutlineInputBorder(
@@ -197,7 +200,9 @@ class OtpCodeState extends State<OtpCode> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF31314D),
                     minimumSize: Size(
-                      screenWidth > 600 ? screenWidth * 0.4 : screenWidth * 0.85,
+                      screenWidth > 600
+                          ? screenWidth * 0.4
+                          : screenWidth * 0.85,
                       63,
                     ),
                     elevation: 0,
