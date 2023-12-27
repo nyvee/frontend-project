@@ -6,9 +6,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'dart:convert';
 import 'package:logger/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+
 // Import Pages
 import '/pages/authpages/forgot_pass.dart';
-import '/pages/home_page.dart';
+import '/main.dart';
 import '/pages/authpages/sign_up.dart';
 
 // Import Components
@@ -58,13 +60,20 @@ class LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseBody = jsonDecode(response.body);
         String token = responseBody['token'];
+
+        Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
+        String? userId = decodedToken['_id'];
+
         var box = Hive.box('myBox');
         box.put('token', token);
+        box.put('userId', userId);
         logger.d('Login successfully');
         printToken();
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(
+            builder: (context) => MyHomePage(),
+          ),
         );
       } else {
         logger.d('Failed to login');
@@ -82,6 +91,7 @@ class LoginPageState extends State<LoginPage> {
     var box = Hive.box('myBox');
     String? token = box.get('token');
     logger.d('Token: $token');
+    logger.d('ID: ${box.get('userId')}');
   }
 
   @override

@@ -5,6 +5,7 @@ import '../pages/explore_page.dart';
 import '../pages/cart_page.dart';
 import '../pages/transactions_page.dart';
 import '../pages/profile_page.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MyBottomNavBar extends StatelessWidget {
   final PersistentTabController controller;
@@ -62,41 +63,36 @@ class MyBottomNavBar extends StatelessWidget {
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: currentIndex == 0
-            ? const Icon(Icons.home)
-            : const Icon(Icons.home_outlined),
+        icon: const FaIcon(FontAwesomeIcons.house),
+        iconSize: 24,
         title: 'Home',
         activeColorPrimary: Color.fromARGB(255, 49, 48, 77),
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: currentIndex == 1
-            ? const Icon(Icons.explore_rounded)
-            : const Icon(Icons.explore_outlined),
+        icon: const FaIcon(FontAwesomeIcons.solidCompass),
+        iconSize: 24,
         title: 'Explore',
         activeColorPrimary: Color.fromARGB(255, 49, 48, 77),
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: currentIndex == 2
-            ? const Icon(Icons.shopping_cart)
-            : const Icon(Icons.shopping_cart_outlined),
+        icon: const FaIcon(FontAwesomeIcons.cartShopping),
+        iconSize: 24,
         title: 'Cart',
         activeColorPrimary: Color.fromARGB(255, 49, 48, 77),
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: currentIndex == 3
-            ? const Icon(Icons.receipt_long)
-            : const Icon(Icons.receipt_long_rounded),
+        icon: const FaIcon(FontAwesomeIcons.receipt),
+        iconSize: 24,
         title: 'Transactions',
         activeColorPrimary: Color.fromARGB(255, 49, 48, 77),
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: currentIndex == 4
-            ? const Icon(Icons.person)
-            : const Icon(Icons.person_outline),
+        icon: const FaIcon(FontAwesomeIcons.solidCircleUser),
+        iconSize: 24,
         title: 'Profile',
         activeColorPrimary: Color.fromARGB(255, 49, 48, 77),
         inactiveColorPrimary: Colors.grey,

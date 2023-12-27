@@ -13,7 +13,7 @@ class TransactionsPage extends StatefulWidget {
 
 class _TransactionsPageState extends State<TransactionsPage> {
   late List<Transaction> transactions;
-  late List<Transaction> filteredTransactions;
+  List<Transaction> filteredTransactions = [];
 
   @override
   void initState() {

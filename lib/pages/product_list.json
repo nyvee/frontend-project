@@ -1,0 +1,44 @@
+[
+    {
+      "Nama": "Produk A",
+      "Keterangan": "Keterangan Singkat",
+      "Harga": "Rp 100.000",
+      "id": "1"
+    },
+    {
+      "Nama": "Produk B",
+      "Keterangan": "Keterangan Singkat",
+      "Harga": "Rp 100.000",
+      "id": "2"
+    },
+    {
+      "Nama": "Produk C",
+      "Keterangan": "Keterangan Singkat",
+      "Harga": "Rp 100.000",
+      "id": "3"
+    },
+    {
+      "Nama": "Produk D",
+      "Keterangan": "Keterangan Singkat",
+      "Harga": "Rp 100.000",
+      "id": "4"
+    },
+    {
+      "Nama": "Produk E",
+      "Keterangan": "Keterangan Singkat",
+      "Harga": "Rp 100.000",
+      "id": "5"
+    },
+    {
+      "Nama": "Produk F",
+      "Keterangan": "Keterangan Singkat",
+      "Harga": "Rp 100.000",
+      "id": "6"
+    },
+    {
+      "Nama": "Produk G",
+      "Keterangan": "Keterangan Singkat",
+      "Harga": "Rp 100.000",
+      "id": "7"
+    }
+  ]

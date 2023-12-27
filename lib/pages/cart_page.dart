@@ -11,7 +11,7 @@ final logger = Logger();
 
 String userId = Hive.box('myBox').get('userId');
 
-Future<List<CartItem>> fetchCart() async {
+Future<List<CartItem>> fetchCart(String userId) async {
   final url =
       Uri.parse('https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/$userId');
   final response = await http.get(
@@ -42,10 +42,11 @@ class CartPage extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 240, 236, 229),
       appBar: MyAppBar(title: 'Shopping Cart'),
       body: FutureBuilder<List<CartItem>>(
-        future: fetchCart(),
+        future: fetchCart(userId),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             List<CartItem> cartItems = snapshot.data;
+            logger.i(cartItems);
             double total = calculateTotalPrice(cartItems);
             return Column(
               children: [

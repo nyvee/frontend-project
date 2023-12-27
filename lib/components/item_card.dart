@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '/pages/subpages/product_details_page.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ItemCard extends StatelessWidget {
   final String productName;
@@ -110,10 +111,12 @@ class ItemCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               // Love Icon
-                              Icon(Icons.favorite_border, color: color1),
+                              FaIcon(FontAwesomeIcons.solidHeart,
+                                  color: color1, size: 20.0),
                               SizedBox(width: 8.0),
                               // Cart Icon
-                              Icon(Icons.shopping_cart, color: color1),
+                              FaIcon(FontAwesomeIcons.cartShopping,
+                                  color: color1, size: 20.0),
                             ],
                           ),
                         ],

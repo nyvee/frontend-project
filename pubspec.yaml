@@ -53,6 +53,7 @@ dependencies:
   jwt_decode: ^0.3.1
   flutter_launcher_icons: ^0.13.1
   url_launcher: ^6.1.14
+  font_awesome_flutter: ^10.6.0
 
 flutter_icons:
   android: true

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_project/components/carousel.dart';
 import 'package:frontend_project/components/item_card.dart';
 import 'package:http/http.dart' as http;
@@ -41,8 +42,6 @@ class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController();
   final PageController _recommendedPageController1 = PageController();
   final PageController _recommendedPageController2 = PageController();
-  // int _currentPage = 0;
-  // late Timer _timer;
   late List<Product> _recommendedProductsContainer1 = [];
   late List<Product> _recommendedProductsContainer2 = [];
   bool _recommendedProductsLoaded = false;
@@ -69,7 +68,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // _startTimer();
     _loadRecommendedProducts();
   }
 
@@ -103,7 +101,7 @@ class _HomePageState extends State<HomePage> {
         color: Colors.transparent,
       ),
       child: Center(
-        child: Icon(iconData, color: const Color(0xFF31314D)),
+        child: FaIcon(iconData, color: const Color(0xFF31314D), size: 20.0),
       ),
     );
   }
@@ -182,9 +180,9 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.only(left: 20, right: 0.0),
                       child: Row(
                         children: [
-                          _buildIconContainer(Icons.favorite_border),
+                          _buildIconContainer(FontAwesomeIcons.solidHeart),
                           const SizedBox(width: 18.0),
-                          _buildIconContainer(Icons.notifications_none),
+                          _buildIconContainer(FontAwesomeIcons.solidBell),
                         ],
                       ),
                     ),
@@ -322,11 +320,11 @@ class _HomePageState extends State<HomePage> {
 
 Widget buildMenuBox(String text) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 8.0),
-    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+    margin: EdgeInsets.only(left: 11.0),
+    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(8.0),
-      border: Border.all(color: Color(0xFF31304D)),
+      border: Border.all(color: Color(0xFF31304D), width: 2.2),
       color: Colors.transparent,
     ),
     child: Center(
@@ -336,217 +334,4 @@ Widget buildMenuBox(String text) {
       ),
     ),
   );
-}
-
-class RecommendedProductCard2 extends StatelessWidget {
-  final String productName;
-  final String description;
-  final String imagePath;
-  final double price;
-
-  RecommendedProductCard2({
-    required this.productName,
-    required this.description,
-    required this.imagePath,
-    required this.price,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 0.5),
-      child: Card(
-        elevation: 3.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Product Image
-            Container(
-              height: 130.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)),
-                image: DecorationImage(
-                  image: NetworkImage(
-                      imagePath), // Menggunakan NetworkImage untuk gambar dari API
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            // Space with color for Product name, description, price, and icons
-            Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFF0ECE5),
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(8.0)),
-              ),
-              child: Column(
-                children: [
-                  // Product Name
-                  Container(
-                    padding: EdgeInsets.all(8.0),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      productName,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF31304D)),
-                    ),
-                  ),
-                  SizedBox(height: 0.5),
-                  // Product Description
-                  Container(
-                    height: 30.0,
-                    padding: EdgeInsets.all(8.0),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      description,
-                      style:
-                          TextStyle(fontSize: 12.0, color: Color(0xFF31304D)),
-                    ),
-                  ),
-                  // Price and Love Icon and Cart Icon
-                  Container(
-                    padding: EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Price (Align to the left)
-                        Text(
-                          'Rp. ${price.toStringAsFixed(2)}',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12.0,
-                              color: Color(0xFF31304D)),
-                        ),
-                        // Love Icon and Cart Icon
-                        Row(
-                          children: [
-                            // Love Icon
-                            Icon(Icons.favorite_border,
-                                color: Color(0xFF31304D)),
-                            SizedBox(width: 8.0),
-                            // Cart Icon
-                            Icon(Icons.shopping_cart, color: Color(0xFF31304D)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RecommendedProductCard extends StatelessWidget {
-  final String productName;
-  final String description;
-  final String imagePath;
-  final double price;
-
-  RecommendedProductCard({
-    required this.productName,
-    required this.description,
-    required this.imagePath,
-    required this.price,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 0.5),
-      child: Card(
-        elevation: 3.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Product Image
-            Container(
-              height: 130.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)),
-                image: DecorationImage(
-                  image: NetworkImage(
-                      imagePath), // Menggunakan NetworkImage untuk gambar dari API
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            // Space with color for Product name, description, price, and icons
-            Container(
-              decoration: BoxDecoration(
-                color: Color(0xFF31304D),
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(8.0)),
-              ),
-              child: Column(
-                children: [
-                  // Product Name
-                  Container(
-                    padding: EdgeInsets.all(8.0),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      productName,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFF0ECE5)),
-                    ),
-                  ),
-                  // Product Description
-                  Container(
-                    height: 30.0,
-                    padding: EdgeInsets.all(8.0),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      description,
-                      style:
-                          TextStyle(fontSize: 12.0, color: Color(0xFFF0ECE5)),
-                    ),
-                  ),
-                  // Price and Love Icon and Cart Icon
-                  Container(
-                    padding: EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Price (Align to the left)
-                        Text(
-                          'Rp. ${price.toStringAsFixed(2)}',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12.0,
-                              color: Color(0xFFF0ECE5)),
-                        ),
-                        // Love Icon and Cart Icon
-                        Row(
-                          children: [
-                            // Love Icon
-                            Icon(Icons.favorite_border,
-                                color: Color(0xFFF0ECE5)),
-                            SizedBox(width: 8.0),
-                            // Cart Icon
-                            Icon(Icons.shopping_cart, color: Color(0xFFF0ECE5)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

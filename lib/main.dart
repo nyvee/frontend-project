@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
@@ -8,10 +10,12 @@ import 'pages/authpages/login.dart';
 void main() async {
   await Hive.initFlutter();
   await Hive.openBox('myBox');
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,18 +24,20 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: AppEntryPoint(),
+      home: const AppEntryPoint(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  PersistentTabController _controller =
+  final PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
 
   void _onItemSelected(int index) {
@@ -53,15 +59,17 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class AppEntryPoint extends StatelessWidget {
+  const AppEntryPoint({super.key});
+
   @override
   Widget build(BuildContext context) {
     var box = Hive.box('myBox');
     var token = box.get('token');
 
     if (token == null) {
-      return LoginPage();
+      return const LoginPage();
     } else {
-      return MyHomePage();
+      return const MyHomePage();
     }
   }
 }
