@@ -31,4 +31,4 @@ This final project aims to create a comprehensive E-Commerce solution with both 
 
 ## Links:
 ### [Frontend Repositores](https://github.com/nyvee/frontend-project)
-### [Backtend Repositores](https://github.com/Ardikaas/backend-project)
+### [Backend Repositores](https://github.com/Ardikaas/backend-project)
