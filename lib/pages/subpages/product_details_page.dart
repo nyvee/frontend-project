@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'dart:convert';
 // import 'dart:html';
 import 'package:flutter/material.dart';
@@ -14,36 +12,99 @@ final logger = Logger();
 String token = Hive.box('myBox').get('token');
 
 Future<Map<String, dynamic>> fetchProduct(String productId) async {
-  final response = await http.get(
-    Uri.parse(
-        'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products/$productId'),
-  );
+  try {
+    final response = await http.get(
+      Uri.parse(
+          'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products/$productId'),
+    );
 
-  if (response.statusCode == 200) {
-    Map<String, dynamic> product = jsonDecode(response.body);
-    return product['data'];
-  } else {
-    throw Exception('Failed to load product');
+    if (response.statusCode == 200) {
+      Map<String, dynamic> product = jsonDecode(response.body);
+      return product['data'];
+    } else {
+      throw Exception('Failde to Load Product');
+    }
+  } catch (e) {
+    logger.e('Error fetching product: $e');
+    return Future.error('Failde to Get Product');
   }
 }
 
 class ProductDetailsPage extends StatefulWidget {
   final String productId;
 
-  const ProductDetailsPage({super.key, required this.productId});
+  ProductDetailsPage({required this.productId});
 
   @override
   _ProductDetailsPageState createState() => _ProductDetailsPageState();
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  late Future<Map<String, dynamic>> _productFuture;
   bool isOnWishlist = false;
+  late Future<Map<String, dynamic>> _productFuture;
 
   @override
   void initState() {
     super.initState();
     _productFuture = fetchProduct(widget.productId);
+    _checkWishlistStatus();
+    // someFunction();
+  }
+
+  // void someFunction() async {
+  //   bool isSuccess = await _checkWishlistStatus();
+
+  //   if (isSuccess) {
+  //     // Wishlist berhasil dicek
+  //     print('Wishlist checked successfully');
+  //   } else {
+  //     // Gagal melakukan cek wishlist
+  //     print('Failed to check wishlist');
+  //   }
+  // }
+
+  Future<void> _checkWishlistStatus() async {
+    try {
+      final userId = Hive.box('myBox').get('userId');
+      final url = Uri.parse(
+          'https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/$userId');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> userData = jsonDecode(response.body);
+        List<dynamic> wishlistItemsJson = userData['data']['wishlist'];
+        setState(() {
+          isOnWishlist = wishlistItemsJson
+              .any((item) => item['productid'] == widget.productId);
+        });
+        // return true;
+      } else {
+        logger.e('Check wishlist status - Status code: ${response.statusCode}');
+        logger.e('Check wishlist status - Response body: ${response.body}');
+        throw Exception('Failed to load wishlist');
+      }
+    } catch (e) {
+      logger.e('Error checking wishlist status: $e');
+      return Future.error('Error checking wishlist status');
+    }
+  }
+
+  Future<void> _toggleWishlistStatus(String productId) async {
+    try {
+      if (isOnWishlist) {
+        await removeFromWishlist(productId);
+      } else {
+        await addToWishlist(productId);
+      }
+      await _checkWishlistStatus();
+    } catch (e) {
+      logger.e('Error toggling wishlist status: $e');
+    }
   }
 
   @override
@@ -52,7 +113,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       future: _productFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -64,7 +125,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   Widget buildProductDetailsPage(Map<String, dynamic> product) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 240, 236, 229),
+      backgroundColor: Color.fromARGB(255, 240, 236, 229),
       appBar: MyAppBar(
         showBackButton: true,
         title: product['name'],
@@ -82,7 +143,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Text(
               product['name'],
               style: GoogleFonts.montserrat(
-                textStyle: const TextStyle(
+                textStyle: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 49, 48, 77)),
@@ -94,7 +155,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             padding: const EdgeInsets.only(left: 20.0, right: 20.0),
             child: Text(product['overview'],
                 style: GoogleFonts.montserrat(
-                  textStyle: const TextStyle(
+                  textStyle: TextStyle(
                     fontSize: 14,
                     color: Color.fromARGB(255, 49, 48, 77),
                   ),
@@ -106,7 +167,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Text(
               'Quantity: ${product['quantity']}',
               style: GoogleFonts.montserrat(
-                textStyle: const TextStyle(
+                textStyle: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 49, 48, 77)),
@@ -123,7 +184,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 decimalDigits: 0,
               ).format(product['price']),
               style: GoogleFonts.montserrat(
-                textStyle: const TextStyle(
+                textStyle: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 49, 48, 77)),
@@ -131,18 +192,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             ),
           ),
           const SizedBox(height: 10),
-          const Divider(
+          Divider(
             color: Color.fromARGB(255, 49, 48, 77),
             thickness: 1,
             indent: 20,
             endIndent: 20,
           ),
           const SizedBox(height: 10),
-          const Padding(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0, right: 20.0),
             child: Text(
               'Details',
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 49, 48, 77)),
@@ -163,7 +224,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Text(
               'Rating: ${product['rating']}',
               style: GoogleFonts.montserrat(
-                textStyle: const TextStyle(
+                textStyle: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 49, 48, 77)),
@@ -176,7 +237,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Text(
               'Reviews: ${product['numReviews']}',
               style: GoogleFonts.montserrat(
-                textStyle: const TextStyle(
+                textStyle: TextStyle(
                     fontSize: 16, color: Color.fromARGB(255, 49, 48, 77)),
               ),
             ),
@@ -191,49 +252,46 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: EdgeInsets.all(5.0),
               child: InkWell(
                 onTap: () {
-                  // Handle favorite/wishlist button pressed
-                  setState(() {
-                    isOnWishlist = !isOnWishlist;
-                  });
+                  _toggleWishlistStatus(product['_id']);
                 },
                 child: Container(
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
                     color: isOnWishlist
-                        ? const Color.fromARGB(255, 49, 48, 77)
-                        : const Color.fromARGB(255, 240, 236, 229),
+                        ? Color.fromARGB(255, 49, 48, 77)
+                        : Color.fromARGB(255, 240, 236, 229),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: const Color.fromARGB(255, 49, 48, 77),
+                      color: Color.fromARGB(255, 49, 48, 77),
                       width: 2,
                     ),
                   ),
                   child: Icon(
                     isOnWishlist ? Icons.favorite : Icons.favorite_border,
                     color: isOnWishlist
-                        ? const Color.fromARGB(255, 240, 236, 229)
-                        : const Color.fromARGB(255, 49, 48, 77),
+                        ? Color.fromARGB(255, 240, 236, 229)
+                        : Color.fromARGB(255, 49, 48, 77),
                   ),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: EdgeInsets.all(5.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                      const Color.fromARGB(255, 49, 48, 77), // background color
+                      Color.fromARGB(255, 49, 48, 77), // background color
                   foregroundColor:
-                      const Color.fromARGB(255, 240, 236, 229), // text color
+                      Color.fromARGB(255, 240, 236, 229), // text color
                   padding: const EdgeInsets.fromLTRB(
                       40, 10, 40, 10), // inner padding
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
-                    side: const BorderSide(
+                    side: BorderSide(
                         color: Color.fromARGB(255, 49, 48, 77),
                         width: 2), // border color and width
                   ),
@@ -244,18 +302,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: EdgeInsets.all(5.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(
-                      255, 240, 236, 229), // background color
+                  backgroundColor:
+                      Color.fromARGB(255, 240, 236, 229), // background color
                   foregroundColor:
-                      const Color.fromARGB(255, 49, 48, 77), // text color
+                      Color.fromARGB(255, 49, 48, 77), // text color
                   padding: const EdgeInsets.fromLTRB(
                       20, 10, 20, 10), // inner padding
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
-                    side: const BorderSide(
+                    side: BorderSide(
                         color: Color.fromARGB(255, 49, 48, 77),
                         width: 2), // border color and width
                   ),
@@ -271,6 +329,58 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         ),
       ),
     );
+  }
+}
+
+Future<void> addToWishlist(String productId) async {
+  try {
+    final url = Uri.parse(
+        'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products/wishlist/$productId');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'productId': productId,
+      }),
+    );
+    logger.i('Response status: ${response.statusCode}');
+    logger.i('Response body: ${response.body}');
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to add to wishlist');
+    }
+  } catch (e) {
+    logger.e('Error adding to wishlist: $e');
+    return Future.error('Error adding to wishlist');
+  }
+}
+
+Future<void> removeFromWishlist(String productId) async {
+  try {
+    final url = Uri.parse(
+        'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products/wishlist/$productId');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'productId': productId,
+      }),
+    );
+    logger.i('Response status: ${response.statusCode}');
+    logger.i('Response body: ${response.body}');
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to remove from wishlist');
+    }
+  } catch (e) {
+    logger.e('Error removing from wishlist: $e');
+    return Future.error('Error removing from wishlist');
   }
 }
 
