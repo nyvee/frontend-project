@@ -12,16 +12,21 @@ final logger = Logger();
 String token = Hive.box('myBox').get('token');
 
 Future<Map<String, dynamic>> fetchProduct(String productId) async {
-  final response = await http.get(
-    Uri.parse(
-        'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products/$productId'),
-  );
+  try {
+    final response = await http.get(
+      Uri.parse(
+          'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products/$productId'),
+    );
 
-  if (response.statusCode == 200) {
-    Map<String, dynamic> product = jsonDecode(response.body);
-    return product['data'];
-  } else {
-    throw Exception('Failed to load product');
+    if (response.statusCode == 200) {
+      Map<String, dynamic> product = jsonDecode(response.body);
+      return product['data'];
+    } else {
+      throw Exception('Failde to Load Product');
+    }
+  } catch (e) {
+    logger.e('Error fetching product: $e');
+    return Future.error('Failde to Get Product');
   }
 }
 
@@ -35,13 +40,71 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  late Future<Map<String, dynamic>> _productFuture;
   bool isOnWishlist = false;
+  late Future<Map<String, dynamic>> _productFuture;
 
   @override
   void initState() {
     super.initState();
     _productFuture = fetchProduct(widget.productId);
+    _checkWishlistStatus();
+    // someFunction();
+  }
+
+  // void someFunction() async {
+  //   bool isSuccess = await _checkWishlistStatus();
+
+  //   if (isSuccess) {
+  //     // Wishlist berhasil dicek
+  //     print('Wishlist checked successfully');
+  //   } else {
+  //     // Gagal melakukan cek wishlist
+  //     print('Failed to check wishlist');
+  //   }
+  // }
+
+  Future<void> _checkWishlistStatus() async {
+    try {
+      final userId = Hive.box('myBox').get('userId');
+      final url = Uri.parse(
+          'https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/$userId');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> userData = jsonDecode(response.body);
+        List<dynamic> wishlistItemsJson = userData['data']['wishlist'];
+        setState(() {
+          isOnWishlist = wishlistItemsJson
+              .any((item) => item['productid'] == widget.productId);
+        });
+        // return true;
+      } else {
+        logger.e('Check wishlist status - Status code: ${response.statusCode}');
+        logger.e('Check wishlist status - Response body: ${response.body}');
+        throw Exception('Failed to load wishlist');
+      }
+    } catch (e) {
+      logger.e('Error checking wishlist status: $e');
+      return Future.error('Error checking wishlist status');
+    }
+  }
+
+  Future<void> _toggleWishlistStatus(String productId) async {
+    try {
+      if (isOnWishlist) {
+        await removeFromWishlist(productId);
+      } else {
+        await addToWishlist(productId);
+      }
+      await _checkWishlistStatus();
+    } catch (e) {
+      logger.e('Error toggling wishlist status: $e');
+    }
   }
 
   @override
@@ -192,10 +255,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               padding: EdgeInsets.all(5.0),
               child: InkWell(
                 onTap: () {
-                  // Handle favorite/wishlist button pressed
-                  setState(() {
-                    isOnWishlist = !isOnWishlist;
-                  });
+                  _toggleWishlistStatus(product['_id']);
                 },
                 child: Container(
                   width: 40,
@@ -269,6 +329,58 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         ),
       ),
     );
+  }
+}
+
+Future<void> addToWishlist(String productId) async {
+  try {
+    final url = Uri.parse(
+        'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products/wishlist/$productId');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'productId': productId,
+      }),
+    );
+    logger.i('Response status: ${response.statusCode}');
+    logger.i('Response body: ${response.body}');
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to add to wishlist');
+    }
+  } catch (e) {
+    logger.e('Error adding to wishlist: $e');
+    return Future.error('Error adding to wishlist');
+  }
+}
+
+Future<void> removeFromWishlist(String productId) async {
+  try {
+    final url = Uri.parse(
+        'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products/wishlist/$productId');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'productId': productId,
+      }),
+    );
+    logger.i('Response status: ${response.statusCode}');
+    logger.i('Response body: ${response.body}');
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to remove from wishlist');
+    }
+  } catch (e) {
+    logger.e('Error removing from wishlist: $e');
+    return Future.error('Error removing from wishlist');
   }
 }
 

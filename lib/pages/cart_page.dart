@@ -7,6 +7,8 @@ import 'package:logger/logger.dart';
 import '/components/cart_item_card.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import './subpages/checkout_page.dart';
+
 final logger = Logger();
 
 String userId = Hive.box('myBox').get('userId');
@@ -34,6 +36,8 @@ Future<List<CartItem>> fetchCart(String userId) async {
 }
 
 class CartPage extends StatelessWidget {
+  const CartPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -54,7 +58,8 @@ class CartPage extends StatelessWidget {
                   child: _buildCartList(
                       cartItems, screenWidth, screenHeight * 0.8),
                 ),
-                _buildCheckoutButton(total, screenWidth, screenHeight * 0.2),
+                _buildCheckoutButton(
+                    context, total, screenWidth, screenHeight * 0.2),
               ],
             );
           } else if (snapshot.hasError) {
@@ -85,7 +90,8 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCheckoutButton(total, screenWidth, screenHeight) {
+  Widget _buildCheckoutButton(
+      BuildContext context, total, screenWidth, screenHeight) {
     return Wrap(
       children: [
         Container(
@@ -133,7 +139,12 @@ class CartPage extends StatelessWidget {
                 ],
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CheckoutPage()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(
                       255, 49, 48, 77), // Use 'const' for performance

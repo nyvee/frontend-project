@@ -52,11 +52,41 @@ class MyBottomNavBar extends StatelessWidget {
 
   List<Widget> _buildScreens() {
     return [
-      HomePage(),
-      ExplorePage(),
-      CartPage(),
-      TransactionsPage(),
-      ProfilePage(),
+      RefreshIndicator(
+        onRefresh: () async {
+          // Implementasikan logika refresh data di sini
+          await Future.delayed(Duration(seconds: 1));
+        },
+        child: HomePage(),
+      ),
+      RefreshIndicator(
+        onRefresh: () async {
+          // Implementasikan logika refresh data di sini
+          await Future.delayed(Duration(seconds: 1));
+        },
+        child: ExplorePage(),
+      ),
+      RefreshIndicator(
+        onRefresh: () async {
+          // Implementasikan logika refresh data di sini
+          await Future.delayed(Duration(seconds: 1));
+        },
+        child: CartPage(),
+      ),
+      RefreshIndicator(
+        onRefresh: () async {
+          // Implementasikan logika refresh data di sini
+          await Future.delayed(Duration(seconds: 1));
+        },
+        child: TransactionsPage(),
+      ),
+      RefreshIndicator(
+        onRefresh: () async {
+          // Implementasikan logika refresh data di sini
+          await Future.delayed(Duration(seconds: 1));
+        },
+        child: ProfilePage(),
+      ),
     ];
   }
 

@@ -1,57 +1,83 @@
+// ignore_for_file: avoid_print, unused_element
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:intl/intl.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '/pages/subpages/product_details_page.dart';
 
 class Product {
   final String name;
   final String image;
   final double price;
   final String overview;
+  final String id;
 
   Product({
     required this.name,
     required this.image,
     required this.price,
     required this.overview,
+    required this.id,
   });
 }
 
 class Searchh extends StatefulWidget {
-  const Searchh({Key? key}) : super(key: key);
+  final String? searchInput;
+
+  const Searchh({Key? key, this.searchInput}) : super(key: key);
 
   @override
   SearchhState createState() => SearchhState();
 }
 
 class SearchhState extends State<Searchh> {
- late List<Product> searchResults = [];
+  late List<Product> searchResults = [];
   bool hasSearched = false;
   bool noResults = false;
 
 
- List<String> splitAfterNChars(String str, int n) {
-   List<String> result = [];
-   for (int i = 0; i < str.length; i += n) {
-     result.add(str.substring(i, i + n));
-   }
-   return result;
- }
+  @override
+  void initState() {
+    super.initState();
+    // Access the searchInput from the widget property
+    final String? searchInput = widget.searchInput;
+    if (searchInput != null && searchInput.isNotEmpty) {
+      // Call your searchProduct method with the searchInput
+      searchProduct(searchInput).then((results) {
+        setState(() {
+          searchResults = results;
+        });
+        print('Search results loaded: $searchResults');
+      });
+    }
+  }
 
-List<List<Product?>> groupProducts(List<Product> products) {
-   var groupedProducts = <List<Product?>>[];
-   for (var i = 0; i < products.length; i += 2) {
-     groupedProducts.add([
-       products[i],
-       if (i + 1 < products.length) products[i + 1] else null,
-       if (i + 2 < products.length) null else null, // Add an extra null if it's the last product
-     ]);
-   }
-   return groupedProducts;
- }
+  List<String> splitAfterNChars(String str, int n) {
+    List<String> result = [];
+    for (int i = 0; i < str.length; i += n) {
+      result.add(str.substring(i, i + n));
+    }
+    return result;
+  }
 
+  List<List<Product?>> groupProducts(List<Product> products) {
+    var groupedProducts = <List<Product?>>[];
+    for (var i = 0; i < products.length; i += 2) {
+      groupedProducts.add([
+        products[i],
+        if (i + 1 < products.length) products[i + 1] else null,
+        if (i + 2 < products.length)
+          null
+        else
+          null, // Add an extra null if it's the last product
+      ]);
+    }
+    return groupedProducts;
+  }
 
   Future<List<Product>> searchProduct(String productName) async {
     final response = await http.get(Uri.parse(
@@ -77,6 +103,7 @@ List<List<Product?>> groupProducts(List<Product> products) {
               item['name'] != null &&
               item['name'].toLowerCase().contains(productName.toLowerCase()))
           .map((item) => Product(
+                id: item['_id'] ?? '',
                 name: item['name'],
                 image: item['image'] ?? '',
                 price: item['price']?.toDouble() ?? 0.0,
@@ -87,7 +114,8 @@ List<List<Product?>> groupProducts(List<Product> products) {
       setState(() {
         searchResults = filteredResults;
         hasSearched = true;
-        noResults = filteredResults.isEmpty; // Set noResults based on filteredResults
+        noResults =
+            filteredResults.isEmpty; // Set noResults based on filteredResults
       });
 
       return filteredResults;
@@ -115,29 +143,28 @@ List<List<Product?>> groupProducts(List<Product> products) {
                           !hasSearched) &&
                       hasSearched) {
                     return Center(
-                            child: Text(
-                              noResults
-                                ? 'No results'
-                                : 'No more results',
-                              style: GoogleFonts.montserrat(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14.5,
-                              ),
-                            ),
-                          );
+                        child: Padding(
+                      padding: const EdgeInsets.all(
+                          24.0), // Adjust the padding as needed
+                      child: Text(
+                        noResults ? 'No results' : 'No more results',
+                        style: GoogleFonts.montserrat(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14.5,
+                        ),
+                      ),
+                    ));
                   } else if (groupProducts(searchResults).isEmpty) {
-                    return Center();
+                    return const Center();
                   } else {
-                    var productPair =
-                        groupProducts(searchResults)[index];
+                    var productPair = groupProducts(searchResults)[index];
                     return Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: productPair
                           .map((product) => product != null
                               ? _buildProductCard(product)
-                              : Spacer())
+                              : const Spacer())
                           .toList(),
                     );
                   }
@@ -151,163 +178,166 @@ List<List<Product?>> groupProducts(List<Product> products) {
     );
   }
 
-
-
-
-
   Widget _buildHeader() {
- return Container(
-   decoration: BoxDecoration(
-     boxShadow: [
-       BoxShadow(
-         color: Colors.grey.withOpacity(0.5), // Color of shadow
-         spreadRadius: 5, // Spread radius
-         blurRadius: 7, // Blur radius
-         offset: const Offset(0, -3), // Changes position of shadow
-       ),
-     ],
-   ),
-   child: Container(
-  color: const Color(0xFFF0EBE5),
-  child: Column(
-   crossAxisAlignment: CrossAxisAlignment.stretch,
-   children: [
-          const SizedBox(height: 70),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Row(
-                children: [
-                  SizedBox(
-                    width: 250,
-                    height: 40,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(
-                          color: const Color(0xFF31304D),
-                          width: 2.2,
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5), // Color of shadow
+            spreadRadius: 5, // Spread radius
+            blurRadius: 7, // Blur radius
+            offset: const Offset(0, -3), // Changes position of shadow
+          ),
+        ],
+      ),
+      child: Container(
+        color: const Color(0xFFF0EBE5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 70),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 250,
+                      height: 40,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(
+                            color: const Color(0xFF31304D),
+                            width: 2.2,
+                          ),
+                          color: const Color(0xFFF0EBE5),
                         ),
-                        color: const Color(0xFFF0EBE5),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.search, color: Color(0xFF31304D)),
+                            const SizedBox(
+                              width: 5,
+                              height: 0,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                style: const TextStyle(
+                                    fontSize: 18.0, height: 1.2),
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 12.0),
+                                  isDense: true,
+                                ),
+                                onSubmitted: (productName) {
+                                  if (productName.isNotEmpty) {
+                                    searchProduct(productName).then((results) {
+                                      setState(() {
+                                        searchResults = results;
+                                      });
+                                      print(
+                                          'Search results loaded: $searchResults');
+                                    });
+                                  }
+                                },
+                              ),
+                            )
+                          ],
+                        ),
                       ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 0.0),
                       child: Row(
                         children: [
-                          const Icon(Icons.search, color: Color(0xFF31304D)),
-                          const SizedBox(width: 5, height: 0,),
-                          Expanded(
-                            child: TextField(
-                              style: const TextStyle(fontSize: 18.0, height: 1.0),
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                contentPadding:
-                                    EdgeInsets.symmetric(vertical: 12.0),
-                                isDense: true,
-                              ),
-                              onSubmitted: (productName) {
-                                if (productName.isNotEmpty) {
-                                  searchProduct(productName).then((results) {
-                                    setState(() {
-                                      searchResults = results;
-                                    });
-                                    print('Search results loaded: $searchResults');
-                                  });
-                                }
-                              },
+                          _buildIconContainer(Icons.favorite_border),
+                          const SizedBox(width: 18.0),
+                          _buildIconContainer(Icons.notifications_none),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 22),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 32,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 10.0), // Adjust the margin as needed
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Handle button press if needed
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF31314D),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          side: const BorderSide(
+                            color: Color(0xFF31304D),
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.discount, size: 17.0),
+                          const SizedBox(width: 5.0),
+                          Text(
+                            'Promotional Offers',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 0.0),
-                    child: Row(
-                      children: [
-                        _buildIconContainer(Icons.favorite_border),
-                        const SizedBox(width: 18.0),
-                        _buildIconContainer(Icons.notifications_none),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 22),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 390,
-                height: 32,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle button press if needed
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF31314D),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      side: const BorderSide(
-                        color: Color(0xFF31304D),
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.discount, size: 17.0),
-                      const SizedBox(width: 5.0),
-                      Text(
-                        'Promotional Offers',
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-        ],
+              ],
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
-     ),
     );
   }
 
   Widget _buildContent(int index) {
- print('Index: $index, SearchResults length: ${searchResults.length}');
- if (index < searchResults.length) {
- final product = searchResults[index];
- return _buildProductCard(product);
- } else if (index == searchResults.length && searchResults.isNotEmpty) {
- // Use SliverToBoxAdapter for custom content
- return const SliverToBoxAdapter(
- child: Align(
-  alignment: Alignment.center,
-  child: Padding(
-    padding:  EdgeInsets.only(top: 20.0),
-    child: SizedBox(
-      width: double.infinity,
-      child: Text('No more results'),
-    ),
-  ),
- ),
- );
- } else {
- return const SliverToBoxAdapter(
- child: SizedBox(height: 20.0), // Empty SliverToBoxAdapter for spacing
- );
- }
-}
-
-
+    print('Index: $index, SearchResults length: ${searchResults.length}');
+    if (index < searchResults.length) {
+      final product = searchResults[index];
+      return _buildProductCard(product);
+    } else if (index == searchResults.length && searchResults.isNotEmpty) {
+      // Use SliverToBoxAdapter for custom content
+      return const SliverToBoxAdapter(
+        child: Align(
+          alignment: Alignment.center,
+          child: Padding(
+            padding: EdgeInsets.only(top: 20.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: Text('No more results'),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return const SliverToBoxAdapter(
+        child: SizedBox(height: 20.0), // Empty SliverToBoxAdapter for spacing
+      );
+    }
+  }
 
   Widget _buildIconContainer(IconData iconData) {
     return Container(
@@ -322,152 +352,114 @@ List<List<Product?>> groupProducts(List<Product> products) {
         color: Colors.transparent,
       ),
       child: Center(
-        child: Icon(iconData, color: const Color(0xFF31314D)),
+        child: FaIcon(iconData, color: const Color(0xFF31314D)),
       ),
     );
   }
 
   Widget _buildProductCard(Product product) {
-  final formatter = NumberFormat.currency(
-    symbol: 'Rp ',
-    locale: 'id_ID',
-    decimalDigits: 0,
-  );
-
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Card(
-        margin: const EdgeInsets.all(5.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(13),
-          child: Container(
-            color: const Color(0xFF31314D),
-            width: 190.0,
-            height: 320.0,
-            child: Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailsPage(productId: product.id),
+          ),
+        );
+      },
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Card(
+            margin: const EdgeInsets.all(5.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(13),
+              child: Container(
+                color: const Color(0xFF31314D),
+                width: MediaQuery.of(context).size.width * 0.47,
+                height: MediaQuery.of(context).size.width * 0.69,
+                child: Stack(
                   children: [
-                    SizedBox(
-                      height: 170.0,
-                      child: Image.network(
-                        product.image,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.width * 0.4,
+                          child: Image.network(
+                            product.image,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Flexible(
-                                child: Text(
-                                  product.name,
-                                  style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 13.0,
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      product.name,
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13.0,
+                                      ),
+                                    ),
                                   ),
+                                ],
+                              ),
+                              const SizedBox(height: 5.0),
+                              Text(
+                                product.overview,
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 10.0,
+                                ),
+                              ),
+                              const SizedBox(height: 5.0),
+                              Container(
+                                padding: EdgeInsets.all(0.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      NumberFormat.currency(
+                                        locale: 'id_ID',
+                                        symbol: 'Rp',
+                                        decimalDigits: 0,
+                                      ).format(product.price),
+                                      style: GoogleFonts.montserrat(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14.0,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Icon(Icons.favorite_border, color: Colors.white),
+                                        SizedBox(width: 8.0),
+                                        Icon(Icons.shopping_cart, color: Colors.white),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 5.0),
-                          Text(
-                            product.overview,
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 10.0,
-                            ),
-                          ),
-                          const SizedBox(height: 5.0),
-                          Text(
-                            '${formatter.format(product.price)}',
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12.0,
-                            ),
-                          ),
-                          const SizedBox(height: 5.0),
-                          SizedBox(
-                            height: 25.0,
-                            child: OutlinedButton(
-                              onPressed: () {
-                                // Handle button press here
-                              },
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(
-                                  color: Colors.white,
-                                  width: 1.0,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                              ),
-                              child: Text(
-                                'Check Out',
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 12.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                 Positioned(
-                bottom : 25.0,
-                right: 20.0,
-                child: SizedBox(
-                  width: 20.0,
-                  height: 20.0,
-                  child: IconButton(
-                    onPressed: () {
-                      // Handle cart icon button press here
-                    },
-                    icon: const Icon(
-                      Icons.shopping_cart,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-               ),
-                Positioned(
-                  bottom: 25.0,
-                  right: 50.0,
-                  child: SizedBox(
-                    width: 20.0,
-                    height: 20.0,
-                    child: IconButton(
-                      onPressed: () {
-                        // Handle love icon button press here
-                      },
-                      icon: const Icon(
-                        Icons.favorite_border,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
-    ],
-  );
-}
-
-
+    );
+  }
 
 }
