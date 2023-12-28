@@ -9,13 +9,13 @@ class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       appBar: MyAppBar(
         showBackButton: true,
         title: 'Settings',
       ),
-      body: const ButtonList(),
-      backgroundColor: const Color(0xffF0ECE5),
+      body: ButtonList(),
+      backgroundColor: Color(0xffF0ECE5),
     );
   }
 }
@@ -199,7 +199,7 @@ class ButtonList extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            MyApp()), // replace MyApp with your root widget
+                            const MyApp()), // replace MyApp with your root widget
                   );
                 },
                 style: ElevatedButton.styleFrom(

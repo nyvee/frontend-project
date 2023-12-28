@@ -12,13 +12,13 @@ class PrivacyPage extends StatefulWidget {
 class PrivacyPageState extends State<PrivacyPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       appBar: MyAppBar(
         showBackButton: true,
         title: 'Privacy Policy',
       ),
-      body: const BodyPage(),
-      backgroundColor: const Color(0xffF0ECE5),
+      body: BodyPage(),
+      backgroundColor: Color(0xffF0ECE5),
     );
   }
 }

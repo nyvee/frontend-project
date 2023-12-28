@@ -45,20 +45,24 @@ Widget buildCartItemCard(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: screenWidth * 0.18,
-                height: screenHeight * 0.09,
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  child: Image.network(
-                    item.imageUrl,
-                    fit: BoxFit.cover,
-                    width: 70,
-                    height: 70,
+              Material(
+                elevation: 2.0,
+                borderRadius: BorderRadius.circular(5.0),
+                child: Container(
+                  width: screenWidth * 0.18,
+                  height: screenHeight * 0.09,
+                  decoration: const BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                    child: Image.network(
+                      item.imageUrl,
+                      fit: BoxFit.cover,
+                      width: 70,
+                      height: 70,
+                    ),
                   ),
                 ),
               ),
@@ -69,7 +73,8 @@ Widget buildCartItemCard(
         Positioned(
           top: (screenHeight * 0.02),
           left: (screenWidth * 0.25),
-          child: Text(item.name, style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text(item.name,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
         Positioned(
           bottom: (screenHeight * 0.02),
@@ -80,7 +85,7 @@ Widget buildCartItemCard(
               symbol: 'Rp',
               decimalDigits: 0,
             ).format(item.price * item.amount),
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         Positioned(
@@ -92,7 +97,7 @@ Widget buildCartItemCard(
               child: InkWell(
                 borderRadius: BorderRadius.circular(5.0),
                 onTap: () {},
-                child: Icon(
+                child: const Icon(
                   Icons.delete,
                   size: 20.0,
                   color: Color.fromARGB(255, 49, 48, 77),
@@ -107,7 +112,7 @@ Widget buildCartItemCard(
               Ink(
                 width: 24.0,
                 height: 24.0,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 240, 236, 229),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(5.0),
@@ -115,34 +120,34 @@ Widget buildCartItemCard(
                   ),
                 ),
                 child: InkWell(
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(5.0),
                     bottomLeft: Radius.circular(5.0),
                   ),
                   onTap: () {},
-                  child: Icon(
+                  child: const Icon(
                     Icons.remove,
                     size: 15.0,
                     color: Color.fromARGB(255, 49, 48, 77),
                   ),
                 ),
               ),
-              SizedBox(width: 1.0),
+              const SizedBox(width: 1.0),
               Container(
                 width: 24.0,
                 height: 24.0,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 240, 236, 229),
                 ),
                 child: Center(
                   child: Text('${item.amount}'),
                 ),
               ),
-              SizedBox(width: 1.0),
+              const SizedBox(width: 1.0),
               Ink(
                 width: 24.0,
                 height: 24.0,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 240, 236, 229),
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(5.0),
@@ -150,12 +155,12 @@ Widget buildCartItemCard(
                   ),
                 ),
                 child: InkWell(
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topRight: Radius.circular(5.0),
                     bottomRight: Radius.circular(5.0),
                   ),
                   onTap: () {},
-                  child: Icon(
+                  child: const Icon(
                     Icons.add,
                     size: 15.0,
                     color: Color.fromARGB(255, 49, 48, 77),

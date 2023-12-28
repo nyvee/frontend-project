@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -35,6 +37,8 @@ class Product {
 }
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -48,7 +52,7 @@ class _HomePageState extends State<HomePage> {
   bool _recommendedProductsLoaded = false;
 
   Future<List<Product>> fetchProducts() async {
-    final url = 'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products';
+    const url = 'https://ecommerce-api-ofvucrey6a-uc.a.run.app/api/products';
     final response = await http.get(
       Uri.parse(url),
       headers: {
@@ -123,7 +127,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFF0EBE5),
+        backgroundColor: const Color(0xFFF0EBE5),
         elevation: 6,
         toolbarHeight: 125.0,
         title: Column(
@@ -169,7 +173,8 @@ class _HomePageState extends State<HomePage> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => Searchh(),
+                                        builder: (context) =>
+                                            Searchh(searchInput: productName),
                                       ),
                                     );
                                   }
@@ -201,8 +206,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            SizedBox(height: 10.0),
-            Container(
+            const SizedBox(height: 10.0),
+            SizedBox(
               height: 40.0,
               child: ListView(
                 scrollDirection: Axis.horizontal,
@@ -221,35 +226,34 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Container(
-        color: Color(0xFFF0ECE5),
+        color: const Color(0xFFF0ECE5),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 15.0),
+              const SizedBox(height: 15.0),
 
               // Carousel
-              Carousel(),
+              const Carousel(),
               // Container pertama
               Container(
-                margin: EdgeInsets.symmetric(vertical: 16.0),
-                padding: EdgeInsets.fromLTRB(8.0, 8.0, 10.0, 10.0),
+                margin: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 10.0, 10.0),
                 color: Colors.white,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Recommended for you',
                       style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF31304D)),
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     // Slide produk
                     if (_recommendedProductsLoaded)
-                      Container(
-                        width: double.infinity,
+                      SizedBox(
                         height: 280.0,
                         child: PageView.builder(
                           controller: PageController(viewportFraction: 0.6),
@@ -264,8 +268,8 @@ class _HomePageState extends State<HomePage> {
                                   _recommendedProductsContainer1[index].image,
                               price:
                                   _recommendedProductsContainer1[index].price,
-                              color1: Color(0xFFF0ECE5),
-                              color2: Color(0xFF31304D),
+                              color1: const Color(0xFFF0ECE5),
+                              color2: const Color(0xFF31304D),
                               productId: _recommendedProductsContainer1[index]
                                   .productId,
                             );
@@ -278,24 +282,23 @@ class _HomePageState extends State<HomePage> {
 
               // Container kedua
               Container(
-                margin: EdgeInsets.symmetric(vertical: 16.0),
-                padding: EdgeInsets.fromLTRB(8.0, 8.0, 10.0, 10.0),
-                color: Color(0xFF31304D),
+                margin: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 10.0, 10.0),
+                color: const Color(0xFF31304D),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Recommended for you',
                       style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFF0ECE5)),
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     // Slide produk
                     if (_recommendedProductsLoaded)
-                      Container(
-                        width: double.infinity,
+                      SizedBox(
                         height: 280.0,
                         child: PageView.builder(
                           controller: PageController(viewportFraction: 0.6),
@@ -310,8 +313,8 @@ class _HomePageState extends State<HomePage> {
                                   _recommendedProductsContainer2[index].image,
                               price:
                                   _recommendedProductsContainer2[index].price,
-                              color1: Color(0xFF31304D),
-                              color2: Color(0xFFF0ECE5),
+                              color1: const Color(0xFF31304D),
+                              color2: const Color(0xFFF0ECE5),
                               productId: _recommendedProductsContainer2[index]
                                   .productId,
                             );
@@ -331,17 +334,17 @@ class _HomePageState extends State<HomePage> {
 
 Widget buildMenuBox(String text) {
   return Container(
-    margin: EdgeInsets.only(left: 11.0),
-    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+    margin: const EdgeInsets.only(left: 11.0),
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(8.0),
-      border: Border.all(color: Color(0xFF31304D), width: 2.2),
+      border: Border.all(color: const Color(0xFF31304D), width: 2.2),
       color: Colors.transparent,
     ),
     child: Center(
       child: Text(
         text,
-        style: TextStyle(color: Color(0xFF31304D)),
+        style: const TextStyle(color: Color(0xFF31304D)),
       ),
     ),
   );

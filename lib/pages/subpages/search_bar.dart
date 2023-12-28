@@ -39,7 +39,6 @@ class SearchhState extends State<Searchh> {
   bool hasSearched = false;
   bool noResults = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -135,41 +134,36 @@ class SearchhState extends State<Searchh> {
             header: _buildHeader(),
           ),
           SliverPadding(
-            padding: const EdgeInsets.only(top: 15.0),
-            sliver: SliverList(
+            padding: const EdgeInsets.fromLTRB(
+                2.0, 20.0, 0.0, 0.0), // Add padding to the SliverPadding
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 0.0,
+                mainAxisSpacing: 8.0,
+                childAspectRatio: 0.7,
+              ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  if ((index >= groupProducts(searchResults).length ||
-                          !hasSearched) &&
-                      hasSearched) {
-                    return Center(
-                        child: Padding(
-                      padding: const EdgeInsets.all(
-                          24.0), // Adjust the padding as needed
-                      child: Text(
-                        noResults ? 'No results' : 'No more results',
-                        style: GoogleFonts.montserrat(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14.5,
-                        ),
-                      ),
-                    ));
-                  } else if (groupProducts(searchResults).isEmpty) {
-                    return const Center();
-                  } else {
-                    var productPair = groupProducts(searchResults)[index];
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: productPair
-                          .map((product) => product != null
-                              ? _buildProductCard(product)
-                              : const Spacer())
-                          .toList(),
-                    );
-                  }
+                  final product = searchResults[index];
+                  return _buildProductCard(product);
                 },
-                childCount: groupProducts(searchResults).length + 1,
+                childCount: searchResults.length,
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Text(
+                  searchResults.isEmpty ? 'No results' : 'No more results',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14.5,
+                  ),
+                ),
               ),
             ),
           ),
@@ -367,99 +361,101 @@ class SearchhState extends State<Searchh> {
           ),
         );
       },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Card(
-            margin: const EdgeInsets.all(5.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(13),
-              child: Container(
-                color: const Color(0xFF31314D),
-                width: MediaQuery.of(context).size.width * 0.47,
-                height: MediaQuery.of(context).size.width * 0.69,
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.width * 0.4,
-                          child: Image.network(
-                            product.image,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      product.name,
-                                      style: GoogleFonts.montserrat(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 13.0,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 5.0),
-                              Text(
-                                product.overview,
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 10.0,
-                                ),
-                              ),
-                              const SizedBox(height: 5.0),
-                              Container(
-                                padding: EdgeInsets.all(0.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      NumberFormat.currency(
-                                        locale: 'id_ID',
-                                        symbol: 'Rp',
-                                        decimalDigits: 0,
-                                      ).format(product.price),
-                                      style: GoogleFonts.montserrat(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.0,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Icon(Icons.favorite_border, color: Colors.white),
-                                        SizedBox(width: 8.0),
-                                        Icon(Icons.shopping_cart, color: Colors.white),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+      child: Card(
+        margin: const EdgeInsets.all(5.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: Container(
+            color: const Color(0xFF31314D),
+            width: MediaQuery.of(context).size.width * 0.47,
+            height: MediaQuery.of(context).size.width * 0.69,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Image.network(
+                    product.image,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              product.name,
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5.0),
+                      Text(
+                        product.overview,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10.0,
+                        ),
+                      ),
+                      const SizedBox(height: 5.0),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        NumberFormat.currency(
+                          locale: 'id_ID',
+                          symbol: 'Rp',
+                          decimalDigits: 0,
+                        ).format(product.price),
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.solidHeart,
+                            color: Colors.white,
+                            size: 20.0,
+                          ),
+                          SizedBox(width: 8.0),
+                          FaIcon(
+                            FontAwesomeIcons.cartShopping,
+                            color: Colors.white,
+                            size: 20.0,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
-
 }

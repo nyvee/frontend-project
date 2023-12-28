@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -46,10 +48,10 @@ class ChangePassState extends State<ChangePass> {
       if (rppassController.text != rpcpassController.text) {
         setState(() {
           isPasswordMatch = false;
-          isLoading = false; 
+          isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Passwords do not match'),
             duration: Duration(seconds: 3),
           ),
@@ -277,13 +279,13 @@ class ChangePassState extends State<ChangePass> {
                     child: isLoading
                         ? const CircularProgressIndicator()
                         : Text(
-                      "Reset Password",
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 25,
-                      ),
-                    ),
+                            "Reset Password",
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 25,
+                            ),
+                          ),
                   ),
                 ),
               ],

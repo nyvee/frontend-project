@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
@@ -72,7 +74,7 @@ class LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => MyHomePage(),
+            builder: (context) => const MyHomePage(),
           ),
         );
       } else {
@@ -274,7 +276,7 @@ class LoginPageState extends State<LoginPage> {
                           }
                         : null,
                     child: _isLoading
-                        ? CircularProgressIndicator()
+                        ? const CircularProgressIndicator()
                         : Text(
                             'Sign In',
                             style: GoogleFonts.montserrat(

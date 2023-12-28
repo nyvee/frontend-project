@@ -1,7 +1,11 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 
 class Carousel extends StatefulWidget {
+  const Carousel({super.key});
+
   @override
   _CarouselState createState() => _CarouselState();
 }
@@ -14,7 +18,7 @@ class _CarouselState extends State<Carousel> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (_currentPage < 5) {
         _currentPage++;
       } else {
@@ -23,7 +27,7 @@ class _CarouselState extends State<Carousel> {
 
       _pageController.animateToPage(
         _currentPage,
-        duration: Duration(milliseconds: 350),
+        duration: const Duration(milliseconds: 350),
         curve: Curves.easeIn,
       );
     });
@@ -37,7 +41,7 @@ class _CarouselState extends State<Carousel> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 200.0,
       child: Column(
         children: [
@@ -67,19 +71,19 @@ class _CarouselState extends State<Carousel> {
             ),
           ),
           Container(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             color: Colors.transparent,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 6, // Sesuaikan dengan jumlah gambar yang Anda miliki
                 (index) => Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
                   width: 24.0,
                   height: 4.0,
                   decoration: BoxDecoration(
                     color: (index == _currentPage)
-                        ? Color(0xFF31304D)
+                        ? const Color(0xFF31304D)
                         : Colors.grey[400],
                   ),
                 ),

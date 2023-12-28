@@ -27,7 +27,7 @@ class MyBottomNavBar extends StatelessWidget {
       screens: _buildScreens(),
       items: _navBarsItems(),
       confineInSafeArea: true,
-      backgroundColor: Color.fromARGB(255, 240, 236, 229),
+      backgroundColor: const Color.fromARGB(255, 240, 236, 229),
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
@@ -52,41 +52,11 @@ class MyBottomNavBar extends StatelessWidget {
 
   List<Widget> _buildScreens() {
     return [
-      RefreshIndicator(
-        onRefresh: () async {
-          // Implementasikan logika refresh data di sini
-          await Future.delayed(Duration(seconds: 1));
-        },
-        child: HomePage(),
-      ),
-      RefreshIndicator(
-        onRefresh: () async {
-          // Implementasikan logika refresh data di sini
-          await Future.delayed(Duration(seconds: 1));
-        },
-        child: ExplorePage(),
-      ),
-      RefreshIndicator(
-        onRefresh: () async {
-          // Implementasikan logika refresh data di sini
-          await Future.delayed(Duration(seconds: 1));
-        },
-        child: CartPage(),
-      ),
-      RefreshIndicator(
-        onRefresh: () async {
-          // Implementasikan logika refresh data di sini
-          await Future.delayed(Duration(seconds: 1));
-        },
-        child: TransactionsPage(),
-      ),
-      RefreshIndicator(
-        onRefresh: () async {
-          // Implementasikan logika refresh data di sini
-          await Future.delayed(Duration(seconds: 1));
-        },
-        child: ProfilePage(),
-      ),
+      const HomePage(),
+      const ExplorePage(),
+      const CartPage(),
+      const TransactionsPage(),
+      const ProfilePage(),
     ];
   }
 
@@ -96,35 +66,35 @@ class MyBottomNavBar extends StatelessWidget {
         icon: const FaIcon(FontAwesomeIcons.house),
         iconSize: 24,
         title: 'Home',
-        activeColorPrimary: Color.fromARGB(255, 49, 48, 77),
+        activeColorPrimary: const Color.fromARGB(255, 49, 48, 77),
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
         icon: const FaIcon(FontAwesomeIcons.solidCompass),
         iconSize: 24,
         title: 'Explore',
-        activeColorPrimary: Color.fromARGB(255, 49, 48, 77),
+        activeColorPrimary: const Color.fromARGB(255, 49, 48, 77),
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
         icon: const FaIcon(FontAwesomeIcons.cartShopping),
         iconSize: 24,
         title: 'Cart',
-        activeColorPrimary: Color.fromARGB(255, 49, 48, 77),
+        activeColorPrimary: const Color.fromARGB(255, 49, 48, 77),
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
         icon: const FaIcon(FontAwesomeIcons.receipt),
         iconSize: 24,
         title: 'Transactions',
-        activeColorPrimary: Color.fromARGB(255, 49, 48, 77),
+        activeColorPrimary: const Color.fromARGB(255, 49, 48, 77),
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
         icon: const FaIcon(FontAwesomeIcons.solidCircleUser),
         iconSize: 24,
         title: 'Profile',
-        activeColorPrimary: Color.fromARGB(255, 49, 48, 77),
+        activeColorPrimary: const Color.fromARGB(255, 49, 48, 77),
         inactiveColorPrimary: Colors.grey,
       ),
     ];

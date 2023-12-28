@@ -35,8 +35,36 @@ Future<List<CartItem>> fetchCart(String userId) async {
   }
 }
 
-class CartPage extends StatelessWidget {
+class CartModel extends ChangeNotifier {
+  List<CartItem> _items = [];
+
+  List<CartItem> get items => _items;
+
+  set items(List<CartItem> value) {
+    _items = value;
+    notifyListeners();
+  }
+
+  Future<void> fetchCartItems(String userId) async {
+    items = await fetchCart(userId);
+  }
+}
+
+class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
+
+  @override
+  _CartPageState createState() => _CartPageState();
+}
+
+class _CartPageState extends State<CartPage> {
+  late Future<List<CartItem>> futureCartItems;
+
+  @override
+  void initState() {
+    super.initState();
+    futureCartItems = fetchCart(userId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +72,9 @@ class CartPage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 240, 236, 229),
-      appBar: MyAppBar(title: 'Shopping Cart'),
+      appBar: const MyAppBar(title: 'Shopping Cart'),
       body: FutureBuilder<List<CartItem>>(
-        future: fetchCart(userId),
+        future: futureCartItems,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             List<CartItem> cartItems = snapshot.data;
@@ -81,12 +109,21 @@ class CartPage extends StatelessWidget {
 
   Widget _buildCartList(
       List<CartItem> cartItems, double screenWidth, double screenHeight) {
-    return ListView.builder(
-      itemCount: cartItems.length,
-      itemBuilder: (context, index) {
-        CartItem item = cartItems[index];
-        return buildCartItemCard(item, screenWidth, screenHeight);
+    return RefreshIndicator(
+      color: const Color.fromARGB(255, 49, 48, 77),
+      backgroundColor: const Color.fromARGB(255, 240, 236, 229),
+      onRefresh: () async {
+        setState(() {
+          futureCartItems = fetchCart(userId);
+        });
       },
+      child: ListView.builder(
+        itemCount: cartItems.length,
+        itemBuilder: (context, index) {
+          CartItem item = cartItems[index];
+          return buildCartItemCard(item, screenWidth, screenHeight);
+        },
+      ),
     );
   }
 
@@ -95,8 +132,8 @@ class CartPage extends StatelessWidget {
     return Wrap(
       children: [
         Container(
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 240, 236, 229),
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(255, 240, 236, 229),
             boxShadow: [
               BoxShadow(
                 color: Colors.black54,
@@ -112,9 +149,9 @@ class CartPage extends StatelessWidget {
               Column(
                 children: [
                   RichText(
-                    text: TextSpan(
+                    text: const TextSpan(
                       text: 'Total Price :',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(100, 49, 48, 77),
