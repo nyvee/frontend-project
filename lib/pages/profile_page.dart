@@ -34,7 +34,7 @@ Future<Map<String, dynamic>> fetchProfile(String token, String id) async {
   } else {
     logger.e('Status code: ${response.statusCode}');
     logger.e('Response body: ${response.body}');
-    throw Exception('Failed to load profile');
+    return Future.error('Failed to load profile');
   }
 }
 
@@ -46,88 +46,106 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late Future<Map<String, dynamic>> futureProfile;
+
   @override
   void initState() {
     super.initState();
+    futureProfile = fetchProfile(token, '');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 240, 236, 229),
-      appBar: const MyAppBar(title: 'Profile', showSettingsButton: true),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: fetchProfile(token, ''),
-        builder: (BuildContext context,
-            AsyncSnapshot<Map<String, dynamic>> snapshot) {
-          if (snapshot.hasData) {
-            String id = snapshot.data!['_id'];
-            String avatarUrl =
-                'https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/avatar/$id';
-            String username = snapshot.data!['username'];
-            String firstName = snapshot.data!['firstName'];
-            String lastName = snapshot.data!['lastName'];
-            String email = snapshot.data!['email'];
+        backgroundColor: const Color.fromARGB(255, 240, 236, 229),
+        appBar: const MyAppBar(title: 'Profile', showSettingsButton: true),
+        body: RefreshIndicator(
+          color: const Color.fromARGB(255, 49, 48, 77),
+          backgroundColor: const Color.fromARGB(255, 240, 236, 229),
+          onRefresh: () async {
+            setState(() {
+              futureProfile = fetchProfile(token, '');
+            });
+          },
+          child: ListView(
+            children: [
+              FutureBuilder<Map<String, dynamic>>(
+                future: futureProfile,
+                builder: (BuildContext context,
+                    AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                  if (snapshot.hasData) {
+                    String id = snapshot.data!['_id'];
+                    String avatarUrl =
+                        'https://ecommerce-api-ofvucrey6a-uc.a.run.app/user/avatar/$id';
+                    String username = snapshot.data!['username'];
+                    String firstName = snapshot.data!['firstName'];
+                    String lastName = snapshot.data!['lastName'];
+                    String email = snapshot.data!['email'];
 
-            return Align(
-              alignment: Alignment.topCenter,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-                    buildProfilePicture(avatarUrl, id),
-                    buildProfileInfo(
-                      username,
-                      firstName,
-                      lastName,
-                      email,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            return Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
-                      Container(
-                        width: 240,
-                        height: 240,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
+                    return Align(
+                      alignment: Alignment.topCenter,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 20),
+                            buildProfilePicture(avatarUrl, id),
+                            buildProfileInfo(
+                              username,
+                              firstName,
+                              lastName,
+                              email,
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      buildShimmerProfileInfo(),
-                    ],
-                  ),
-                ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 20),
+                              Container(
+                                width: 240,
+                                height: 240,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              buildShimmerProfileInfo(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
-            );
-          }
-        },
-      ),
-    );
+            ],
+          ),
+        ));
   }
 
   Widget buildProfilePicture(String avatarUrl, String id) {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final updatedAvatarUrl = '$avatarUrl?$timestamp';
+
     return Stack(
       children: [
         CircleAvatar(
           radius: 120,
           backgroundColor: Colors.grey,
-          backgroundImage: NetworkImage(avatarUrl),
+          backgroundImage: NetworkImage(updatedAvatarUrl),
         ),
         Positioned(
           bottom: 15,
@@ -168,6 +186,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         final response = await request.send();
                         if (response.statusCode == 200) {
                           logger.i('Avatar updated');
+
+                          // Trigger a rebuild with a new timestamp to update the image
                           setState(() {});
                         } else {
                           logger.e('Status code: ${response.statusCode}');

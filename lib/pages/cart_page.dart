@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:frontend_project/components/top_app_bar.dart';
@@ -35,8 +37,36 @@ Future<List<CartItem>> fetchCart(String userId) async {
   }
 }
 
-class CartPage extends StatelessWidget {
+class CartModel extends ChangeNotifier {
+  List<CartItem> _items = [];
+
+  List<CartItem> get items => _items;
+
+  set items(List<CartItem> value) {
+    _items = value;
+    notifyListeners();
+  }
+
+  Future<void> fetchCartItems(String userId) async {
+    items = await fetchCart(userId);
+  }
+}
+
+class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
+
+  @override
+  _CartPageState createState() => _CartPageState();
+}
+
+class _CartPageState extends State<CartPage> {
+  late Future<List<CartItem>> futureCartItems;
+
+  @override
+  void initState() {
+    super.initState();
+    futureCartItems = fetchCart(userId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +76,7 @@ class CartPage extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 240, 236, 229),
       appBar: const MyAppBar(title: 'Shopping Cart'),
       body: FutureBuilder<List<CartItem>>(
-        future: fetchCart(userId),
+        future: futureCartItems,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             List<CartItem> cartItems = snapshot.data;
@@ -81,12 +111,21 @@ class CartPage extends StatelessWidget {
 
   Widget _buildCartList(
       List<CartItem> cartItems, double screenWidth, double screenHeight) {
-    return ListView.builder(
-      itemCount: cartItems.length,
-      itemBuilder: (context, index) {
-        CartItem item = cartItems[index];
-        return buildCartItemCard(item, screenWidth, screenHeight);
+    return RefreshIndicator(
+      color: const Color.fromARGB(255, 49, 48, 77),
+      backgroundColor: const Color.fromARGB(255, 240, 236, 229),
+      onRefresh: () async {
+        setState(() {
+          futureCartItems = fetchCart(userId);
+        });
       },
+      child: ListView.builder(
+        itemCount: cartItems.length,
+        itemBuilder: (context, index) {
+          CartItem item = cartItems[index];
+          return buildCartItemCard(item, screenWidth, screenHeight);
+        },
+      ),
     );
   }
 

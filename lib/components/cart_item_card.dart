@@ -45,20 +45,24 @@ Widget buildCartItemCard(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: screenWidth * 0.18,
-                height: screenHeight * 0.09,
-                decoration: const BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                  child: Image.network(
-                    item.imageUrl,
-                    fit: BoxFit.cover,
-                    width: 70,
-                    height: 70,
+              Material(
+                elevation: 2.0,
+                borderRadius: BorderRadius.circular(5.0),
+                child: Container(
+                  width: screenWidth * 0.18,
+                  height: screenHeight * 0.09,
+                  decoration: const BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                    child: Image.network(
+                      item.imageUrl,
+                      fit: BoxFit.cover,
+                      width: 70,
+                      height: 70,
+                    ),
                   ),
                 ),
               ),

@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'subpages/product_details_page.dart';
 
 class Product {
   final String name;
@@ -43,9 +44,6 @@ class ExplorePage extends StatefulWidget {
 
 class _ExplorePageState extends State<ExplorePage> {
   late Future<List<Product>> products;
-
-  double cardWidthPercentage = 0.47;
-
   void initState() {
     super.initState();
     products = fetchProducts();
@@ -196,10 +194,12 @@ class _ExplorePageState extends State<ExplorePage> {
             );
           } else {
             return GridView.builder(
+              padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 0.0),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 8.0, // Adjust the spacing as needed
-                mainAxisSpacing: 8.0, // Adjust the spacing as needed
+                crossAxisSpacing: 4.0,
+                mainAxisSpacing: 8.0,
+                childAspectRatio: 0.7,
               ),
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
@@ -214,103 +214,108 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   Widget _buildProductCard(Product product) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double cardWidth = screenWidth * cardWidthPercentage;
-
-    return Card(
-      margin: const EdgeInsets.all(5.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Container(
-          color: const Color(0xFF31314D),
-          width: cardWidth,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Image.network(
-                  product.image,
-                  fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                ProductDetailsPage(productId: product.productId),
+          ),
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.all(5.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: Container(
+            color: const Color(0xFF31314D),
+            width: MediaQuery.of(context).size.width * 0.47,
+            height: MediaQuery.of(context).size.width * 0.69,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Image.network(
+                    product.image,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            product.name,
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13.0,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              product.name,
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13.0,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5.0),
-                    Text(
-                      product.overview,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 10.0,
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 5.0),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Price (Align to the left)
-                    Text(
-                      NumberFormat.currency(
-                        locale: 'id_ID',
-                        symbol: 'Rp',
-                        decimalDigits: 0,
-                      ).format(product.price),
-                      style: GoogleFonts.montserrat(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.0,
-                        color: Colors.white,
+                      const SizedBox(height: 5.0),
+                      Text(
+                        product.overview,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10.0,
+                        ),
                       ),
-                    ),
-                    // Love Icon and Cart Icon
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        // Love Icon
-                        FaIcon(
-                          FontAwesomeIcons.solidHeart,
-                          color: Colors.white,
-                          size: 20.0,
-                        ),
-                        SizedBox(width: 8.0),
-                        // Cart Icon
-                        FaIcon(
-                          FontAwesomeIcons.cartShopping,
-                          color: Colors.white,
-                          size: 20.0,
-                        ),
-                      ],
-                    ),
-                  ],
+                      const SizedBox(height: 5.0),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        NumberFormat.currency(
+                          locale: 'id_ID',
+                          symbol: 'Rp',
+                          decimalDigits: 0,
+                        ).format(product.price),
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.solidHeart,
+                            color: Colors.white,
+                            size: 20.0,
+                          ),
+                          SizedBox(width: 8.0),
+                          FaIcon(
+                            FontAwesomeIcons.cartShopping,
+                            color: Colors.white,
+                            size: 20.0,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
