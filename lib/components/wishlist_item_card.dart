@@ -56,12 +56,12 @@ Widget buildWishlistItemCard(WishlistItem item, double screenWidth,
                 Container(
                   width: screenWidth * 0.18,
                   height: screenHeight * 0.09,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.grey,
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                     child: Image.network(
                       item.imageUrl,
                       fit: BoxFit.cover,
@@ -77,8 +77,8 @@ Widget buildWishlistItemCard(WishlistItem item, double screenWidth,
           Positioned(
             top: (screenHeight * 0.02),
             left: (screenWidth * 0.25),
-            child:
-                Text(item.name, style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(item.name,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
           ),
           Positioned(
             bottom: (screenHeight * 0.02),
@@ -89,7 +89,7 @@ Widget buildWishlistItemCard(WishlistItem item, double screenWidth,
                 symbol: 'Rp',
                 decimalDigits: 0,
               ).format(item.price),
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],

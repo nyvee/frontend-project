@@ -224,5 +224,6 @@ class ButtonList extends StatelessWidget {
   Future<void> myBox() async {
     var myBox = await Hive.openBox('myBox');
     myBox.delete('token');
+    myBox.delete('userId');
   }
 }

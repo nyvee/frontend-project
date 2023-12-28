@@ -8,7 +8,7 @@ import 'package:frontend_project/components/carousel.dart';
 import 'package:frontend_project/components/item_card.dart';
 import 'package:http/http.dart' as http;
 import 'subpages/search_bar.dart';
-import 'subpages/wishlistPage.dart';
+import 'subpages/wishlist_page.dart';
 
 class Product {
   final String name;
@@ -193,7 +193,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => WishlistPage()),
+                                  builder: (context) => const WishlistPage()),
                             );
                           }),
                           const SizedBox(width: 18.0),

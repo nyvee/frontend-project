@@ -8,6 +8,7 @@ import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '/pages/subpages/product_details_page.dart';
+import '/pages/subpages/wishlist_page.dart';
 
 class Product {
   final String name;
@@ -246,9 +247,16 @@ class SearchhState extends State<Searchh> {
                       padding: const EdgeInsets.only(left: 20, right: 0.0),
                       child: Row(
                         children: [
-                          _buildIconContainer(Icons.favorite_border),
+                          _buildIconContainer(FontAwesomeIcons.solidHeart, () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const WishlistPage()),
+                            );
+                          }),
                           const SizedBox(width: 18.0),
-                          _buildIconContainer(Icons.notifications_none),
+                          _buildIconContainer(
+                              FontAwesomeIcons.solidBell, () {}),
                         ],
                       ),
                     ),
@@ -333,20 +341,23 @@ class SearchhState extends State<Searchh> {
     }
   }
 
-  Widget _buildIconContainer(IconData iconData) {
-    return Container(
-      width: 40.0,
-      height: 40.0,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
-          color: const Color(0xFF31314D),
-          width: 2.2,
+  Widget _buildIconContainer(IconData iconData, Function() onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: 40.0,
+        height: 40.0,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: const Color(0xFF31314D),
+            width: 2.2,
+          ),
+          color: Colors.transparent,
         ),
-        color: Colors.transparent,
-      ),
-      child: Center(
-        child: FaIcon(iconData, color: const Color(0xFF31314D)),
+        child: Center(
+          child: FaIcon(iconData, color: const Color(0xFF31314D), size: 20.0),
+        ),
       ),
     );
   }

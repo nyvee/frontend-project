@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:frontend_project/components/top_app_bar.dart';
 import 'package:frontend_project/components/wishlist_item_card.dart';
@@ -35,6 +37,8 @@ Future<List<WishlistItem>> fetchCart(String userId) async {
 }
 
 class WishlistPage extends StatefulWidget {
+  const WishlistPage({super.key});
+
   @override
   _WishlistPageState createState() => _WishlistPageState();
 }
@@ -46,7 +50,7 @@ class _WishlistPageState extends State<WishlistPage> {
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 240, 236, 229),
-      appBar: MyAppBar(
+      appBar: const MyAppBar(
           title: 'Whislist', showSettingsButton: false, showBackButton: true),
       body: FutureBuilder<List<WishlistItem>>(
         future: fetchCart(userId),
@@ -81,8 +85,8 @@ class _WishlistPageState extends State<WishlistPage> {
         if (index == cartItems.length - 1) {
           // If it is, add padding at the bottom
           card = Padding(
-            padding:
-                EdgeInsets.only(bottom: 20.0), // Change this value as needed
+            padding: const EdgeInsets.only(
+                bottom: 20.0), // Change this value as needed
             child: card,
           );
         }

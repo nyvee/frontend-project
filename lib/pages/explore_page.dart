@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'subpages/product_details_page.dart';
+import 'subpages/wishlist_page.dart';
 
 class Product {
   final String name;
@@ -68,20 +69,23 @@ class _ExplorePageState extends State<ExplorePage> {
     }
   }
 
-  Widget _buildIconContainer(IconData iconData) {
-    return Container(
-      width: 40.0,
-      height: 40.0,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
-          color: const Color(0xFF31314D),
-          width: 2.2,
+  Widget _buildIconContainer(IconData iconData, Function() onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: 40.0,
+        height: 40.0,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: const Color(0xFF31314D),
+            width: 2.2,
+          ),
+          color: Colors.transparent,
         ),
-        color: Colors.transparent,
-      ),
-      child: Center(
-        child: FaIcon(iconData, color: const Color(0xFF31314D), size: 20.0),
+        child: Center(
+          child: FaIcon(iconData, color: const Color(0xFF31314D), size: 20.0),
+        ),
       ),
     );
   }
@@ -152,9 +156,16 @@ class _ExplorePageState extends State<ExplorePage> {
                       padding: const EdgeInsets.only(left: 20, right: 0.0),
                       child: Row(
                         children: [
-                          _buildIconContainer(FontAwesomeIcons.solidHeart),
+                          _buildIconContainer(FontAwesomeIcons.solidHeart, () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const WishlistPage()),
+                            );
+                          }),
                           const SizedBox(width: 18.0),
-                          _buildIconContainer(FontAwesomeIcons.solidBell),
+                          _buildIconContainer(
+                              FontAwesomeIcons.solidBell, () {}),
                         ],
                       ),
                     ),
