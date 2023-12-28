@@ -18,7 +18,7 @@ This final project aims to create a comprehensive E-Commerce solution with both 
 - **User Profile:** Edit personal information and preferences.
 
 ## Web App:
-### Language: Html, CSS, JS
+### Language: HTML, CSS, JS
 ### Framework: [React](https://react.dev/)
 
 ### Components:
@@ -26,7 +26,8 @@ This final project aims to create a comprehensive E-Commerce solution with both 
 - **Landing Page:** Engaging and user-friendly interface showcasing featured products.
 - **Admin Dashboard:** A secure and efficient space for administrators to manage products.
 - **Product Management:** Add, edit, and delete products with ease.
-**To access the admin dashboard, simply add "/dashboard" to the web app link.**
+
+- **To access the admin dashboard, simply add "/dashboard" to the web app link.**
 
 ## Links:
 ### [Frontend Repositores](https://github.com/nyvee/frontend-project)
