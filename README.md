@@ -30,5 +30,8 @@ This final project aims to create a comprehensive E-Commerce solution with both 
 - **To access the admin dashboard, simply add "/dashboard" to the web app link.**
 
 ## Links:
-### [Frontend Repositores](https://github.com/nyvee/frontend-project)
-### [Backend Repositores](https://github.com/Ardikaas/backend-project)
+### Frontend Repository: [https://github.com/nyvee/frontend-project](https://github.com/nyvee/frontend-project)
+### Backend Repository: [https://github.com/Ardikaas/backend-project](https://github.com/Ardikaas/backend-project)
+### Landing Page: [https://lumerce-ofvucrey6a-et.a.run.app](https://lumerce-ofvucrey6a-et.a.run.app)
+### Products Dashboard: [https://lumerce-ofvucrey6a-et.a.run.app/dashboard](https://lumerce-ofvucrey6a-et.a.run.app/dashboard)
+### API: [https://ecommerce-api-ofvucrey6a-uc.a.run.app/](https://ecommerce-api-ofvucrey6a-uc.a.run.app/)
